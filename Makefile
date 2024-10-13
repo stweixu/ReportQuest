@@ -2,6 +2,9 @@
 run:
 	python main.py
 
+run-reloadable:
+	uvicorn main:app --reload
+
 # sync dependancies
 sync:
 	pip install -r "requirements.txt"

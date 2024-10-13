@@ -1,11 +1,16 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Response
+from fastapi.responses import JSONResponse
 from typing import Optional
+import sqlite3
 import uuid
 
-from src.users.services.UserService import UserService, UserCreate, UserRead, User
+from src.users.models.UserModels import UserRegister, UserCreate, UserRead, User, UserLogin, StatusResponse
+from src.users.services.UserService import UserService
 
-router = APIRouter()
-user_service = UserService()  # Instantiate the UserService
+router = APIRouter(prefix="/users")
+
+conn = sqlite3.connect('database/users.db')
+user_service = UserService(conn)  # Instantiate the UserService
 
 @router.get("/all", response_model=list[UserRead])
 async def read_all_users():
@@ -63,3 +68,4 @@ async def wipe_users():
     if status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to wipe users.")
     return {"detail": "All users wiped successfully."}
+

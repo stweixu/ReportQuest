@@ -2,68 +2,20 @@ import sqlite3
 import uuid
 from typing import Literal, Optional, Tuple, List
 from pydantic import BaseModel, Field
-
-# ========= pydantic models for FASTAPI requests ============
-class UserCreate(BaseModel):
-    userID: uuid.UUID = Field(default_factory=uuid.uuid4)
-    userName: str
-    passwordHash: str
-    emailAddress: str
-    loginStatus: bool
-    points: int
-    notificationPreference: Literal['email', 'sms', 'push']
-    notificationEnabled: bool
-    isAuthority: bool
-    isModerator: bool
-
-class UserRead(BaseModel):
-    userID: uuid.UUID
-    userName: str
-    emailAddress: str
-    loginStatus: bool
-    points: int
-    notificationEnabled: bool
-    isAuthority: bool
-    isModerator: bool
-
-
-# ============== Entity class for the User model ===============
-class User:
-    def __init__(self, 
-                 userName: str, 
-                 passwordHash: str, 
-                 emailAddress: str, 
-                 loginStatus: bool, 
-                 points: int, 
-                 notificationPreference: Literal['email', 'sms', 'push'], 
-                 notificationEnabled: bool, 
-                 isAuthority: bool, 
-                 isModerator: bool,
-                 userID: uuid.UUID = None):
-        self.userID: uuid.UUID = userID if userID else uuid.uuid4()
-        self.userName: str = userName
-        self.passwordHash: str = passwordHash
-        self.emailAddress: str = emailAddress
-        self.loginStatus: bool = loginStatus
-        self.points: int = points
-        self.notificationPreference: Literal['email', 'sms', 'push'] = notificationPreference
-        self.notificationEnabled: bool = notificationEnabled
-        self.isAuthority: bool = isAuthority
-        self.isModerator: bool = isModerator
-
-    def __repr__(self) -> str:
-        return (f"User(userID={self.userID}, userName={self.userName}, email={self.emailAddress}, "
-                f"loginStatus={self.loginStatus}, points={self.points}, "
-                f"notificationEnabled={self.notificationEnabled}, isAuthority={self.isAuthority}, "
-                f"isModerator={self.isModerator})")
+import sqlite3
+from argon2 import PasswordHasher
+import jwt
+from datetime import datetime, timedelta
+from config import JWT_SECRET
+from src.users.models.UserModels import UserRegister, UserCreate, UserRead, User, UserLogin, StatusResponse
 
 
 # ============== Service class for the User model ===============
 # ============== Used to interact with database ================
 class UserService:
-    def __init__(self, db_file: str = 'database/users.db'):
+    def __init__(self, conn: sqlite3.Connection, db_file: str = 'database/users.db'):
         """Initialize the UserService with a connection to the SQLite database."""
-        self.conn = sqlite3.connect(db_file)
+        self.conn = conn
         # self.create_user_table()
 
     def create_user_table(self):
