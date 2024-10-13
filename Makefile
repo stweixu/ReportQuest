@@ -2,9 +2,13 @@
 run:
 	python main.py
 
-# update dependancies
-update:
+# sync dependancies
+sync:
 	pip install -r "requirements.txt"
+
+# update dependencies
+update:
+	pip freeze >> requirements.txt
 
 # run migrations
 migrate-up:
