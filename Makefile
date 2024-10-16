@@ -18,4 +18,7 @@ migrate-up:
 	python migrate.py up
 
 migrate-down:
-	python migrate.py down	
+	python migrate.py down
+
+migrate-full:
+	make migrate-down && make migrate-up

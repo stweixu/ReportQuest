@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from src.users.ControllerUser import router as user_router
-from src.users.ControllerPublic import router as public_router
+from src.users.controllers.ControllerUser import router as user_router
+from src.users.controllers.ControllerPublic import router as public_router
+from src.reports.controllers.ControllerReports import router as reports_router
 import uvicorn
 
 app = FastAPI()
@@ -15,6 +16,8 @@ app = FastAPI()
 app.include_router(public_router, prefix="/public", tags=["public"])
 
 app.include_router(user_router, prefix="/users", tags=["users"])
+
+app.include_router(reports_router, prefix="/reports", tags=["reports"])
 
 @app.get("/")
 async def root():

@@ -2,7 +2,8 @@ import sqlite3
 import sys
 from migration_utils import run_migration
 
-def up(conn : sqlite3.Connection):
+def up() -> None:
+    conn : sqlite3.Connection = sqlite3.connect("database/users.db")
     """Create the User table if it doesn't exist."""
     create_table_query = """
     CREATE TABLE IF NOT EXISTS User (
@@ -25,8 +26,13 @@ def up(conn : sqlite3.Connection):
         print("User table created successfully.")
     except sqlite3.Error as e:
         print(e)
+    finally:
+        conn.close()
 
-def down(conn: sqlite3.Connection):
+
+
+def down() -> None:
+    conn : sqlite3.Connection = sqlite3.connect("database/users.db")
     """Delete the User table if it exists."""
     drop_table_query = "DROP TABLE IF EXISTS User;"
     try:
@@ -36,6 +42,8 @@ def down(conn: sqlite3.Connection):
         print("User table deleted successfully.")
     except sqlite3.Error as e:
         print(e)
+    finally:
+        conn.close()
 
 
 
