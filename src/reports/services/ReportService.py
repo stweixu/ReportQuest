@@ -46,7 +46,8 @@ class ReportService:
             ))
             self.conn.commit()
             return 201, report  # Created
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as e:
+            print(e)
             return 400, None  # Bad request: report_id already exists
         except sqlite3.Error as e:
             print(f"Error inserting report: {e}")
@@ -61,9 +62,12 @@ class ReportService:
         reports = [Report(**self._parse_report(result)) for result in results]
         return 200, reports  # OK
 
-    def get_top_k_reports_by_severity(self, k: int) -> Tuple[int, List[Report]]:
+    def get_top_k_reports_by_severity(self, k: int, resolved: bool = False) -> Tuple[int, List[Report]]:
         """Fetch top k reports from the Report table by severity."""
-        query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
+        if resolved:
+            query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
+        else:
+            query = "SELECT * FROM Report WHERE Status = 'Pending' ORDER BY Severity DESC LIMIT ?"
         cursor = self.conn.cursor()
         cursor.execute(query, (k,))
         results = cursor.fetchall()

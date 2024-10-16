@@ -20,7 +20,7 @@ async def create_report(report: Report):
     if status_code == 201:
         return created_report
     elif status_code == 400:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create report: Report ID already exists.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create report.")
     else:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create report.")
 
@@ -32,10 +32,10 @@ async def get_reports_by_user_id(user_id: str):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve reports for the user.")
     return reports
 
-@router.get("/top/{k}", response_model=list[Report])
-async def get_top_k_reports_by_severity(k: int):
+@router.get("/top/{k}/{resolved}", response_model=list[Report])
+async def get_top_k_reports_by_severity(k: int, resolved: bool = False):
     """Retrieve top k reports based on severity."""
-    status_code, reports = report_service.get_top_k_reports_by_severity(k)
+    status_code, reports = report_service.get_top_k_reports_by_severity(k, resolved)
     if status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve top k reports by severity.")
     return reports
