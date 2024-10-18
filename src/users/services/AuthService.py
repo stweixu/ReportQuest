@@ -20,7 +20,7 @@ class AuthService:
         # check if username is already taken
         query = "SELECT * FROM User WHERE userName = ?"
         cursor = self.conn.cursor()
-        cursor.execute(query, (username,))
+        cursor.execute(query, (username.lower(),))
         result = cursor.fetchone()
         if result:
             return (400, None)  # Bad Request user already exists
@@ -34,7 +34,7 @@ class AuthService:
         # insert new user into database
         hashed_password = self.ph.hash(password)
         print("poop")
-        new_user = User(userName=username, passwordHash=hashed_password, emailAddress=email, loginStatus=False, points=0, notificationPreference='email', notificationEnabled=True, isAuthority=False, isModerator=False)
+        new_user = User(userName=username.lower(), passwordHash=hashed_password, emailAddress=email, loginStatus=False, points=0, notificationPreference='email', notificationEnabled=True, isAuthority=False, isModerator=False)
         insert_query = """
         INSERT INTO User (userID, userName, passwordHash, emailAddress, loginStatus, points,
                           notificationPreference, notificationEnabled, isAuthority, isModerator)
