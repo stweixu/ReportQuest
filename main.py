@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from src.users.controllers.ControllerUser import router as user_router
 from src.users.controllers.ControllerPublic import router as public_router
 from src.reports.controllers.ControllerReports import router as reports_router
@@ -6,6 +7,21 @@ import uvicorn
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://127.0.0.1:5173/",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # adding more controllers follows this template
 # from src.products.ControllerProduct import router as product_router

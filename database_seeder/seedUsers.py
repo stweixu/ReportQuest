@@ -127,3 +127,5 @@ dummy_users = [
 # Insert each dummy user into the database
 for user in dummy_users:
     create_user(user)
+
+conn.close()
