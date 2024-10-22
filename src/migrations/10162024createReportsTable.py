@@ -15,8 +15,7 @@ def up():
         imagePath TEXT,
         assignedAuthorityUEN TEXT,
         title TEXT,
-        UEN TEXT,
-        FOREIGN KEY (assignedAuthorityUEN) REFERENCES Authority(UEN)  -- Assuming Authority table exists with UEN as the key
+        UEN TEXT
     );
     """
     try:
