@@ -22,3 +22,6 @@ migrate-down:
 
 migrate-full:
 	make migrate-down && make migrate-up
+
+seed:
+	python seed.py
