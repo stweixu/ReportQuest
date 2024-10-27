@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class Report(BaseModel):
     user_id: str
     severity: int

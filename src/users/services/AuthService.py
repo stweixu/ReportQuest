@@ -2,15 +2,22 @@ from argon2 import PasswordHasher
 import jwt
 from datetime import datetime, timedelta
 from config import JWT_SECRET
-from src.users.models.UserModels import UserRegister, UserCreate, UserRead, User, UserLogin, StatusResponse
+from src.users.models.UserModels import (
+    UserRegister,
+    UserCreate,
+    UserRead,
+    User,
+    UserLogin,
+    StatusResponse,
+)
 import sqlite3
 
 
 # ============== Service class for Auth model ===============
 class AuthService:
-    def __init__(self, conn : sqlite3.Connection):
+    def __init__(self, conn: sqlite3.Connection):
         self.conn = conn
-        self.ph : PasswordHasher = PasswordHasher()
+        self.ph: PasswordHasher = PasswordHasher()
 
     def register(self, username: str, password: str, email: str):
         """Register a new user.
@@ -34,7 +41,17 @@ class AuthService:
         # insert new user into database
         hashed_password = self.ph.hash(password)
         print("poop")
-        new_user = User(userName=username.lower(), passwordHash=hashed_password, emailAddress=email, loginStatus=False, points=0, notificationPreference='email', notificationEnabled=True, isAuthority=False, isModerator=False)
+        new_user = User(
+            userName=username.lower(),
+            passwordHash=hashed_password,
+            emailAddress=email,
+            loginStatus=False,
+            points=0,
+            notificationPreference="email",
+            notificationEnabled=True,
+            isAuthority=False,
+            isModerator=False,
+        )
         insert_query = """
         INSERT INTO User (userID, userName, passwordHash, emailAddress, loginStatus, points,
                           notificationPreference, notificationEnabled, isAuthority, isModerator)
@@ -42,9 +59,21 @@ class AuthService:
         """
         try:
             cursor = self.conn.cursor()
-            cursor.execute(insert_query, (str(new_user.userID), new_user.userName, new_user.passwordHash, new_user.emailAddress,
-                                          new_user.loginStatus, new_user.points, new_user.notificationPreference,
-                                          new_user.notificationEnabled, new_user.isAuthority, new_user.isModerator))
+            cursor.execute(
+                insert_query,
+                (
+                    str(new_user.userID),
+                    new_user.userName,
+                    new_user.passwordHash,
+                    new_user.emailAddress,
+                    new_user.loginStatus,
+                    new_user.points,
+                    new_user.notificationPreference,
+                    new_user.notificationEnabled,
+                    new_user.isAuthority,
+                    new_user.isModerator,
+                ),
+            )
             self.conn.commit()
             return (201, UserRead(**new_user.__dict__))  # Created
         except sqlite3.IntegrityError as e:
@@ -55,7 +84,7 @@ class AuthService:
             return (500, None)  # Internal server error
 
     def login(self, username: str, password: str):
-        """Login a user. 
+        """Login a user.
         takes in password, compares with stored hash. returns JWT"""
         query = "SELECT * FROM User WHERE userName = ?"
         cursor = self.conn.cursor()
@@ -69,9 +98,16 @@ class AuthService:
             print(password_hash, password)
             if self.ph.verify(password_hash, password):
                 # create a new JWT token
-                token = jwt.encode({"username": username,
-                                    "expiration":  int((datetime.now() + timedelta(hours=24)).timestamp())
-                                    }, JWT_SECRET, algorithm="HS256")
+                token = jwt.encode(
+                    {
+                        "username": username,
+                        "expiration": int(
+                            (datetime.now() + timedelta(hours=24)).timestamp()
+                        ),
+                    },
+                    JWT_SECRET,
+                    algorithm="HS256",
+                )
                 return 200, token  # OK
             else:
                 return 401, None  # Unauthorized

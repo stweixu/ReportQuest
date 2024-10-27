@@ -35,9 +35,11 @@ app.include_router(user_router, prefix="/users", tags=["users"])
 
 app.include_router(reports_router, prefix="/reports", tags=["reports"])
 
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the FastAPI application!"}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,6 +1,9 @@
 import sqlite3
 from typing import List, Tuple, Optional
-from src.reports.models.ReportModels import Report  # Assuming the Report model is stored in src/reports/models/ReportModels.py
+from src.reports.models.ReportModels import (
+    Report,
+)  # Assuming the Report model is stored in src/reports/models/ReportModels.py
+
 
 class ReportService:
     def __init__(self, conn: sqlite3.Connection):
@@ -39,11 +42,20 @@ class ReportService:
         """
         try:
             cursor = self.conn.cursor()
-            cursor.execute(insert_query, (
-                report.user_id, report.severity, report.status, report.report_id,
-                report.description, report.image_path, report.assigned_authority_uen,
-                report.title, report.uen
-            ))
+            cursor.execute(
+                insert_query,
+                (
+                    report.user_id,
+                    report.severity,
+                    report.status,
+                    report.report_id,
+                    report.description,
+                    report.image_path,
+                    report.assigned_authority_uen,
+                    report.title,
+                    report.uen,
+                ),
+            )
             self.conn.commit()
             return 201, report  # Created
         except sqlite3.IntegrityError as e:
@@ -62,7 +74,9 @@ class ReportService:
         reports = [Report(**self._parse_report(result)) for result in results]
         return 200, reports  # OK
 
-    def get_top_k_reports_by_severity(self, k: int, resolved: bool = False) -> Tuple[int, List[Report]]:
+    def get_top_k_reports_by_severity(
+        self, k: int, resolved: bool = False
+    ) -> Tuple[int, List[Report]]:
         """Fetch top k reports from the Report table by severity."""
         if resolved:
             query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
@@ -85,7 +99,9 @@ class ReportService:
         else:
             return 404, None  # Not Found
 
-    def search_reports_by_description(self, description: str) -> Tuple[int, List[Report]]:
+    def search_reports_by_description(
+        self, description: str
+    ) -> Tuple[int, List[Report]]:
         """Search reports by description using wildcards."""
         query = "SELECT * FROM Report WHERE Description LIKE ?"
         wildcard_description = f"%{description}%"

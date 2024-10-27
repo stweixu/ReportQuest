@@ -7,6 +7,6 @@ import os
 base_path = "database_seeder"
 
 for i in os.listdir(base_path):
-    command = f'python {base_path}/{i}'
+    command = f"python {base_path}/{i}"
     print(f"executing {command}")
     os.system(command)

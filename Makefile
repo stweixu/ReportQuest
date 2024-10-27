@@ -20,8 +20,11 @@ migrate-up:
 migrate-down:
 	python migrate.py down
 
-migrate-full:
-	make migrate-down && make migrate-up
-
 seed:
 	python seed.py
+
+migrate-full:
+	make migrate-down && make migrate-up && make seed
+
+lint:
+	black .

@@ -4,13 +4,21 @@ from typing import Optional
 import sqlite3
 import uuid
 
-from src.users.models.UserModels import UserRegister, UserCreate, UserRead, User, UserLogin, StatusResponse
+from src.users.models.UserModels import (
+    UserRegister,
+    UserCreate,
+    UserRead,
+    User,
+    UserLogin,
+    StatusResponse,
+)
 from src.users.services.UserService import UserService
 
 router = APIRouter(prefix="/users")
 
-conn = sqlite3.connect('database/users.db')
+conn = sqlite3.connect("database/users.db")
 user_service = UserService(conn)  # Instantiate the UserService
+
 
 @router.get("/all", response_model=list[UserRead])
 async def read_all_users():
@@ -20,15 +28,22 @@ async def read_all_users():
         raise HTTPException(status_code=status_code, detail="Failed to retrieve users.")
     return users
 
+
 @router.get("/", response_model=Optional[UserRead])
 async def read_user(user_id: uuid.UUID):
     """Read a user's details by user ID."""
     status_code, user = user_service.read_user(user_id)
     if status_code == 404:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
     elif status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve user.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve user.",
+        )
     return user
+
 
 @router.post("/", response_model=UserRead)
 async def create_user(user: UserCreate):
@@ -37,35 +52,56 @@ async def create_user(user: UserCreate):
     if status_code == 201:
         return user_read
     elif status_code == 400:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create user: User ID already exists.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to create user: User ID already exists.",
+        )
     else:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create user.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create user.",
+        )
+
 
 @router.put("/", response_model=UserRead)
 async def update_user(user_id: uuid.UUID, points: int):
     """Update user points."""
     status_code = user_service.update_user_points(user_id, points)
     if status_code == 404:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
     elif status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update user points.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update user points.",
+        )
     return {"detail": "User points updated successfully."}
+
 
 @router.delete("/")
 async def delete_user(user_id: uuid.UUID):
     """Delete a user."""
     status_code = user_service.delete_user(user_id)
     if status_code == 404:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
     elif status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to delete user.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete user.",
+        )
     return {"detail": "User deleted successfully."}
+
 
 @router.delete("/wipe", response_model=dict)
 async def wipe_users():
     """Wipe all users from the database."""
     status_code = user_service.wipeClean()
     if status_code != 200:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to wipe users.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to wipe users.",
+        )
     return {"detail": "All users wiped successfully."}
-
