@@ -2,6 +2,7 @@ import ollama
 import aiofiles
 import asyncio
 
+
 class OllamaChat:
     def __init__(self, model_name: str):
         # Initialize with a model name for text or image analysis
@@ -85,12 +86,12 @@ class OllamaChat:
 
         # Await the asynchronous ask for title generation
         title = await self.ask(
-        f"Generate a clear, factual title (under 10 words) for a fault report based on:\n"
-        f"description: {text_description}\n"
-        f"analysis: {image_analysis}\n"
-        f"Only respond with the title, without any additional explanation. "
-        f"Make it straightforward and specific, without figurative language. Do not hallucinate or provide factually incorrect information."
-    )
+            f"Generate a clear, factual title (under 10 words) for a fault report based on:\n"
+            f"description: {text_description}\n"
+            f"analysis: {image_analysis}\n"
+            f"Only respond with the title, without any additional explanation. "
+            f"Make it straightforward and specific, without figurative language. Do not hallucinate or provide factually incorrect information."
+        )
 
         print(title, image_analysis, ratings_int)
         return {"ratings": ratings_int, "title": title}

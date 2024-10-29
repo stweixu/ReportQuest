@@ -17,8 +17,12 @@ from src.reports.services.PointsService import PointsService
 router = APIRouter(prefix="/reports")
 
 # Database connection setup
-report_service = ReportService(sqlite3.connect("database/reports.db"))  # Instantiate the ReportService
-points_service = PointsService(sqlite3.connect("database/points.db"))  # Instantiate the PointsService
+report_service = ReportService(
+    sqlite3.connect("database/reports.db")
+)  # Instantiate the ReportService
+points_service = PointsService(
+    sqlite3.connect("database/points.db")
+)  # Instantiate the PointsService
 
 IMAGE_SAVE_DIRECTORY = "images"
 
@@ -121,7 +125,7 @@ async def submit_report(
     user_id: str = Form(...),
     description: Optional[str] = Form(None),
     title: Optional[str] = Form(None),
-    image: Optional[UploadFile] = File(None)
+    image: Optional[UploadFile] = File(None),
 ):
     # Check if the user exists
     if not report_service.check_user_exists(user_id):
@@ -134,7 +138,7 @@ async def submit_report(
 
     # Generate a timestamp and create a filename with it
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_extension = image.filename.split('.')[-1]
+    file_extension = image.filename.split(".")[-1]
     unique_filename = f"{timestamp}_{image.filename}.{file_extension}"
     image_path = os.path.join(IMAGE_SAVE_DIRECTORY, unique_filename)
 
@@ -144,12 +148,16 @@ async def submit_report(
             f.write(contents)
     except Exception as e:
         print(f"Error saving image: {e}")
-        return JSONResponse(status_code=500, content={"message": "Failed to save image"})
-    
+        return JSONResponse(
+            status_code=500, content={"message": "Failed to save image"}
+        )
+
     print("Image saved at:", image_path)
     # evalutae report with pointsservice, start the process and return true, do not await
     # asyncio.create_task(points_service.evaluate_and_add_points(user_id, image_path, description))
-    asyncio.create_task(points_service.evaluate_and_add_points(user_id,image_path,description))
+    asyncio.create_task(
+        points_service.evaluate_and_add_points(user_id, image_path, description)
+    )
     return {"message": "Report received successfully"}
 
 

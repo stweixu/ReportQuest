@@ -50,7 +50,6 @@ class OllamaChat:
             f"   - Z = Urgency\n"
         )
 
-
         # Get the comparison response
         response: str = ollama.generate(model=self.model_name, prompt=prompt)
 

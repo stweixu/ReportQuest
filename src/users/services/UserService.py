@@ -101,7 +101,7 @@ class UserService:
             for result in results
         ]
         return 200, users  # OK
-    
+
     def check_user_exists(self, user_id: str) -> bool:
         # look up the points db and table
         # return True if the user exists, False otherwise

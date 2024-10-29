@@ -5,6 +5,7 @@ from src.reports.models.ReportModels import (
 )  # Assuming the Report model is stored in src/reports/models/ReportModels.py
 from src.users.services.UserService import UserService
 
+
 class ReportService:
     def __init__(self, conn: sqlite3.Connection):
         """Initialize the ReportService with a connection to the SQLite database."""
@@ -163,5 +164,6 @@ class ReportService:
     def check_user_exists(self, user_id: str) -> bool:
         # look up the points db and table using the UserService
         # return True if the user exists, False otherwise
-        return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)
-
+        return UserService(sqlite3.connect("database/users.db")).check_user_exists(
+            user_id
+        )
