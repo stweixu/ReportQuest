@@ -2,6 +2,9 @@
 run:
 	python main.py
 
+enable-ollama-gpu:
+	watch -n 0.5 nvidia-smi
+
 run-reloadable:
 	uvicorn main:app --reload
 

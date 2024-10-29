@@ -1,8 +1,6 @@
 import ollama
 import aiofiles
 import asyncio
-import time
-
 
 class OllamaChat:
     def __init__(self, model_name: str):

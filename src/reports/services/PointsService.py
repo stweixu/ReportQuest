@@ -1,6 +1,6 @@
 import sqlite3
 import time
-from OllamaAsync import OllamaChat
+from src.reports.services.OllamaAsync import OllamaChat
 import asyncio
 
 
@@ -87,6 +87,7 @@ class PointsService:
         self, user_id: str, image_path: str, text_description: str
     ) -> None:
         # get the points from the user_id
+        print("thinking....")
         points = self.get_point_from_user_id(user_id)
         # add the points to the user_id
         new_points = await self.evalute_points(user_id, image_path, text_description)
@@ -110,24 +111,24 @@ class PointsService:
 
 
 # tests
-async def main():
-    ps = PointsService(sqlite3.connect("database/points.db"))
-    # ps.create_user("123e4567-e89b-12d3-a456-426614174000")
-    print(ps.get_point_from_user_id("123e4567-e89b-12d3-a456-426614174000"))
-    ps.update_point_for_user_id("123e4567-e89b-12d3-a456-426614174000", 10)
-    print(ps.get_point_from_user_id("123e4567-e89b-12d3-a456-426614174000"))
-    res_task = asyncio.create_task(
-        ps.evaluate_and_add_points(
-            "123e4567-e89b-12d3-a456-426614174000",
-            "images/image.png",
-            "Man falling over, with crutches. He is wearing a blue shirt and black pants. The man is sitting on a bench and is looking down at the ground. There are trees in the background.",
-        )
-    )
+# async def main():
+#     ps = PointsService(sqlite3.connect("database/points.db"))
+#     # ps.create_user("123e4567-e89b-12d3-a456-426614174000")
+#     print(ps.get_point_from_user_id("123e4567-e89b-12d3-a456-426614174000"))
+#     ps.update_point_for_user_id("123e4567-e89b-12d3-a456-426614174000", 10)
+#     print(ps.get_point_from_user_id("123e4567-e89b-12d3-a456-426614174000"))
+#     res_task = asyncio.create_task(
+#         ps.evaluate_and_add_points(
+#             "123e4567-e89b-12d3-a456-426614174000",
+#             "images/image.png",
+#             "Man falling over, with crutches. He is wearing a blue shirt and black pants. The man is sitting on a bench and is looking down at the ground. There are trees in the background.",
+#         )
+#     )
 
-    await asyncio.sleep(30)
-    res = await res_task
-    print(res)
+#     await asyncio.sleep(30)
+#     res = await res_task
+#     print(res)
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# if __name__ == "__main__":
+#     asyncio.run(main())

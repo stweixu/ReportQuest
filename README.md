@@ -49,6 +49,9 @@ make migrate-up
 7. Run the main.py, ensure you are in root directory
 
 ```
+# activate the GPU if applicable
+make enable-ollama-gpu
+# run the main.py
 make run-reloadable
 ```
 

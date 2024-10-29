@@ -101,6 +101,17 @@ class UserService:
             for result in results
         ]
         return 200, users  # OK
+    
+    def check_user_exists(self, user_id: str) -> bool:
+        # look up the points db and table
+        # return True if the user exists, False otherwise
+        query = "SELECT UserID FROM User WHERE UserID = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchone()
+        if result:
+            return True
+        return False
 
     def read_user(self, user_id: uuid.UUID) -> Tuple[int, Optional[UserRead]]:
         """Fetch a user's details from the User table by userID."""

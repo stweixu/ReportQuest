@@ -1,17 +1,26 @@
-from fastapi import APIRouter, HTTPException, status
+import asyncio
+import os
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
+from PIL import Image
+import io
 import uuid
+from datetime import datetime
 
 from src.reports.models.ReportModels import Report
 from src.reports.services.ReportService import ReportService
+from src.users.services.UserService import UserService
+from src.reports.services.PointsService import PointsService
 
 router = APIRouter(prefix="/reports")
 
 # Database connection setup
-conn = sqlite3.connect("database/reports.db")
-report_service = ReportService(conn)  # Instantiate the ReportService
+report_service = ReportService(sqlite3.connect("database/reports.db"))  # Instantiate the ReportService
+points_service = PointsService(sqlite3.connect("database/points.db"))  # Instantiate the PointsService
+
+IMAGE_SAVE_DIRECTORY = "images"
 
 
 @router.post("/", response_model=Report)
@@ -105,6 +114,43 @@ async def search_reports_by_uen(uen: str):
             detail="Failed to search reports by UEN.",
         )
     return reports
+
+
+@router.post("/submit-report/")
+async def submit_report(
+    user_id: str = Form(...),
+    description: Optional[str] = Form(None),
+    title: Optional[str] = Form(None),
+    image: Optional[UploadFile] = File(None)
+):
+    # Check if the user exists
+    if not report_service.check_user_exists(user_id):
+        return JSONResponse(status_code=404, content={"message": "User not found"})
+    # Optionally, save or process the image
+    if not image:
+        return JSONResponse(status_code=400, content={"message": "No image provided"})
+    # Read the file contents
+    contents = await image.read()
+
+    # Generate a timestamp and create a filename with it
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_extension = image.filename.split('.')[-1]
+    unique_filename = f"{timestamp}_{image.filename}.{file_extension}"
+    image_path = os.path.join(IMAGE_SAVE_DIRECTORY, unique_filename)
+
+    # Save the image
+    try:
+        with open(image_path, "wb") as f:
+            f.write(contents)
+    except Exception as e:
+        print(f"Error saving image: {e}")
+        return JSONResponse(status_code=500, content={"message": "Failed to save image"})
+    
+    print("Image saved at:", image_path)
+    # evalutae report with pointsservice, start the process and return true, do not await
+    # asyncio.create_task(points_service.evaluate_and_add_points(user_id, image_path, description))
+    asyncio.create_task(points_service.evaluate_and_add_points(user_id,image_path,description))
+    return {"message": "Report received successfully"}
 
 
 @router.delete("/{report_id}")
