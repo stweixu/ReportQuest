@@ -18,7 +18,6 @@
 ├── requirements.txt
 ├── seed.py
 ├── src
-│   ├── login
 │   ├── middleware
 │   │   └── verifyJWT.py
 │   ├── migrations
@@ -28,8 +27,6 @@
 │   │   ├── 10262024createPointsTable.py
 │   │   └── migration_utils.py
 │   ├── points
-│   │   ├── controller
-│   │   ├── model
 │   │   └── service
 │   │       └── OllamaService.py
 │   ├── reports
@@ -43,11 +40,14 @@
 │   │       ├── PointsService.py
 │   │       └── ReportService.py
 │   ├── rewards
+│   │   ├── controllers
+│   │   │   └── ControllerReward.py
 │   │   ├── models
 │   │   │   ├── RewardModel.py
 │   │   │   └── test.csv
 │   │   └── services
-│   │       └── RewardService.py
+│   │       ├── RewardService.py
+│   │       └── pooop.py
 │   └── users
 │       ├── controllers
 │       │   ├── ControllerPublic.py
@@ -60,4 +60,4 @@
 ├── structure.txt
 └── todo
 
-21 directories, 39 files
+20 directories, 41 files
