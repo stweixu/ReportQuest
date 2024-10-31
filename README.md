@@ -46,7 +46,21 @@ pip install -r "requirements.txt"
 make migrate-up
 ```
 
-7. Run the main.py, ensure you are in root directory
+7. Installing ollama
+
+```
+curl -fsSL https://ollama.com/install.sh | sh
+
+ollama pull llama3.2
+
+ollama pull llava
+
+# to test:
+
+ollama run ollama3.2
+```
+
+8. Run the main.py, ensure you are in root directory
 
 ```
 # activate the GPU if applicable
@@ -55,7 +69,7 @@ make enable-ollama-gpu
 make run-reloadable
 ```
 
-8. To test the application, open http://0.0.0.0:8000/docs in your browser and test endpoints
+9. To test the application, open http://0.0.0.0:8000/docs in your browser and test endpoints
 
 ## Setup on MACOS
 
