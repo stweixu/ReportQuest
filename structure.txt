@@ -1,0 +1,63 @@
+.
+├── CHECKPOINT.md
+├── Makefile
+├── README.md
+├── config.py
+├── database
+│   ├── points.db
+│   ├── reports.db
+│   ├── rewards.db
+│   └── users.db
+├── database_seeder
+│   ├── seedReports.py
+│   ├── seedRewards.py
+│   └── seedUsers.py
+├── main.py
+├── migrate.py
+├── poop.py
+├── requirements.txt
+├── seed.py
+├── src
+│   ├── login
+│   ├── middleware
+│   │   └── verifyJWT.py
+│   ├── migrations
+│   │   ├── 10102024createUserTable.py
+│   │   ├── 10162024createReportsTable.py
+│   │   ├── 10182024CreateRewards.py
+│   │   ├── 10262024createPointsTable.py
+│   │   └── migration_utils.py
+│   ├── points
+│   │   ├── controller
+│   │   ├── model
+│   │   └── service
+│   │       └── OllamaService.py
+│   ├── reports
+│   │   ├── controllers
+│   │   │   └── ControllerReports.py
+│   │   ├── models
+│   │   │   ├── PointsModel.py
+│   │   │   └── ReportModels.py
+│   │   └── services
+│   │       ├── OllamaAsync.py
+│   │       ├── PointsService.py
+│   │       └── ReportService.py
+│   ├── rewards
+│   │   ├── models
+│   │   │   ├── RewardModel.py
+│   │   │   └── test.csv
+│   │   └── services
+│   │       └── RewardService.py
+│   └── users
+│       ├── controllers
+│       │   ├── ControllerPublic.py
+│       │   └── ControllerUser.py
+│       ├── models
+│       │   └── UserModels.py
+│       └── services
+│           ├── AuthService.py
+│           └── UserService.py
+├── structure.txt
+└── todo
+
+21 directories, 39 files

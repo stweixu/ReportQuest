@@ -125,6 +125,7 @@ async def submit_report(
     user_id: str = Form(...),
     description: Optional[str] = Form(None),
     title: Optional[str] = Form(None),
+    location: Optional[str] = Form(None), # location is in the fomat of "lat,long"
     image: Optional[UploadFile] = File(None),
 ):
     # Check if the user exists

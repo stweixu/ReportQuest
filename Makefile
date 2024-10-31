@@ -29,5 +29,8 @@ seed:
 migrate-full:
 	make migrate-down && make migrate-up && make seed
 
+generate-architecture:
+	tree -I 'venv|__pycache__' -I 'images' > structure.txt
+
 lint:
 	black .
