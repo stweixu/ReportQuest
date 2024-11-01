@@ -116,7 +116,8 @@ class AuthService:
                     algorithm="HS256",
                 )
                 print({"token": token, "user_id": user_id})
-                return 200, {"token": token, "user_id": user_id}
+                return 200, {"token": token, "user_id": user_id, "isAuthority": isAuthority,
+                        "isModerator": isModerator,}
             else:
                 return 401, None  # Unauthorized
         else:

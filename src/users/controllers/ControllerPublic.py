@@ -45,7 +45,7 @@ async def login_user(user: UserLogin):
     status_code, res = auth_service.login(user.username, user.password)
     if status_code == 200:
         # Set the cookie in the response
-        response = JSONResponse(content={"token": res['token'], "user_id": res['user_id']}, status_code=status_code)
+        response = JSONResponse(content={"token": res['token'], "user_id": res['user_id'], "isAuthority": res['isAuthority'], "isModerator": res['isModerator']}, status_code=status_code)
         response.set_cookie(
             key="access_token",
             value=res['token'],
