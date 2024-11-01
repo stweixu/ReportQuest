@@ -1,13 +1,9 @@
+from typing import Optional, List, Tuple
+from pydantic import BaseModel
 import sqlite3
 import uuid
 from faker import Faker
-from typing import List, Tuple
-
-# i copy pasted it here cuz i had some issues with the file pathing...
-from pydantic import BaseModel
-from typing import Optional
 import random
-
 
 class Report(BaseModel):
     user_id: str
@@ -16,19 +12,18 @@ class Report(BaseModel):
     report_id: str
     description: Optional[str]
     image_path: Optional[str]
-    assigned_authority_uen: Optional[str]
     title: Optional[str]
-    uen: Optional[str]
+    datetime: int
+    location: str  # Ensure this is included if required
 
-
+# Database connection
 conn = sqlite3.connect("database/reports.db")
-
 
 def create_report(report: Report) -> Tuple[int, Optional[Report]]:
     """Insert a new report into the Report table."""
     insert_query = """
-        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, assignedAuthorityUEN, title, UEN)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
         """
     try:
         cursor = conn.cursor()
@@ -41,9 +36,7 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
                 report.report_id,
                 report.description,
                 report.image_path,
-                report.assigned_authority_uen,
-                report.title,
-                report.uen,
+                report.title,  # No longer including UEN and assigned_authority_uen
             ),
         )
         conn.commit()
@@ -55,7 +48,6 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
         print(f"Error inserting report: {e}")
         return 500, None  # Internal server error
 
-
 fake: Faker = Faker()
 
 predefined_uuids = [
@@ -66,7 +58,6 @@ predefined_uuids = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174004"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174005"),
 ]
-
 
 def generate_fake_reports(num_reports: int) -> List[Report]:
     """Generate a list of fake Report entries."""
@@ -81,16 +72,13 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             report_id=str(uuid.uuid4()),
             description=fake.sentence(nb_words=10),
             image_path=fake.file_path(extension="jpg"),
-            assigned_authority_uen=(
-                fake.uuid4() if fake.boolean(chance_of_getting_true=50) else None
-            ),
             title=fake.catch_phrase(),
-            uen=fake.uuid4() if fake.boolean(chance_of_getting_true=50) else None,
+            datetime=fake.unix_time(),  # Add a datetime field if required
+            location=fake.city()  # Add a location field if required
         )
         reports.append(report)
 
     return reports
-
 
 # Generate 10 fake report entries
 fake_reports = generate_fake_reports(10)

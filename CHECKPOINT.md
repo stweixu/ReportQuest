@@ -6,4 +6,7 @@ We decided to decouple the points system service from the users service, in orde
 
 ## Change 2:
 
-    - Add changes here
+for reports:
+Location
+datetime
+change UEN to author

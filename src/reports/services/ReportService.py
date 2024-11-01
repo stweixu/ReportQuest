@@ -1,8 +1,6 @@
 import sqlite3
 from typing import List, Tuple, Optional
-from src.reports.models.ReportModels import (
-    Report,
-)  # Assuming the Report model is stored in src/reports/models/ReportModels.py
+from src.reports.models.ReportModels import Report  # Assuming the Report model is stored here
 from src.users.services.UserService import UserService
 
 
@@ -21,10 +19,9 @@ class ReportService:
             ReportID TEXT PRIMARY KEY,
             Description TEXT,
             imagePath TEXT,
-            assignedAuthorityUEN TEXT,
             title TEXT,
-            UEN TEXT,
-            FOREIGN KEY (assignedAuthorityUEN) REFERENCES Authority(UEN)
+            Datetime INTEGER NOT NULL,
+            Location TEXT NOT NULL
         );
         """
         try:
@@ -38,7 +35,7 @@ class ReportService:
     def create_report(self, report: Report) -> Tuple[int, Optional[Report]]:
         """Insert a new report into the Report table."""
         insert_query = """
-        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, assignedAuthorityUEN, title, UEN)
+        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title, Datetime, Location)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
@@ -52,9 +49,9 @@ class ReportService:
                     report.report_id,
                     report.description,
                     report.image_path,
-                    report.assigned_authority_uen,
                     report.title,
-                    report.uen,
+                    report.datetime,
+                    report.location,
                 ),
             )
             self.conn.commit()
@@ -79,9 +76,8 @@ class ReportService:
         self, k: int, resolved: bool = False
     ) -> Tuple[int, List[Report]]:
         """Fetch top k reports from the Report table by severity."""
-        if resolved:
-            query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
-        else:
+        query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
+        if not resolved:
             query = "SELECT * FROM Report WHERE Status = 'Pending' ORDER BY Severity DESC LIMIT ?"
         cursor = self.conn.cursor()
         cursor.execute(query, (k,))
@@ -122,15 +118,6 @@ class ReportService:
         reports = [Report(**self._parse_report(result)) for result in results]
         return 200, reports  # OK
 
-    def search_reports_by_uen(self, uen: str) -> Tuple[int, List[Report]]:
-        """Search reports by UEN."""
-        query = "SELECT * FROM Report WHERE UEN = ?"
-        cursor = self.conn.cursor()
-        cursor.execute(query, (uen,))
-        results = cursor.fetchall()
-        reports = [Report(**self._parse_report(result)) for result in results]
-        return 200, reports  # OK
-
     def delete_report_by_id(self, report_id: str) -> int:
         """Delete a report from the Report table by ReportID."""
         delete_query = "DELETE FROM Report WHERE ReportID = ?"
@@ -150,9 +137,9 @@ class ReportService:
             "report_id": result[3],
             "description": result[4],
             "image_path": result[5],
-            "assigned_authority_uen": result[6],
-            "title": result[7],
-            "uen": result[8],
+            "title": result[6],
+            "datetime": result[7],
+            "location": result[8],
         }
 
     def close_connection(self):
@@ -162,8 +149,5 @@ class ReportService:
             print("Database connection closed.")
 
     def check_user_exists(self, user_id: str) -> bool:
-        # look up the points db and table using the UserService
-        # return True if the user exists, False otherwise
-        return UserService(sqlite3.connect("database/users.db")).check_user_exists(
-            user_id
-        )
+        """Check if a user exists in the database using UserService."""
+        return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)
