@@ -45,15 +45,15 @@ class PointsService:
         if result:
             return result[0]
         else:
-            return 0
+            return -1
 
     def update_point_for_user_id(self, user_id: str, points: int) -> int:
         # look up the points db and table
         # check user exists
         self.check_user_exists(user_id)
         # update the points and the last updated time
-        print(points, user_id)
-        print(int(time.time()))
+        print(f"update point for user {user_id} with {points}")
+
         query = "UPDATE Points SET points = ?, LastUpdated = ? WHERE UserID = ?;"
         cursor = self.conn.cursor()
         cursor.execute(query, (points, int(time.time()), user_id))
@@ -89,8 +89,11 @@ class PointsService:
         # get the points from the user_id
         print("thinking....")
         points = self.get_point_from_user_id(user_id)
+        if points == -1: # user DNE
+            return
         # add the points to the user_id
         new_points = await self.evalute_points(user_id, image_path, text_description)
+        print(f"new points: {new_points}")
         if new_points:
             points += new_points
             self.update_point_for_user_id(user_id, points)
