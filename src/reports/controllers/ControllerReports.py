@@ -126,17 +126,10 @@ async def submit_report(
     description: Optional[str] = Form(None),
     title: Optional[str] = Form(None),
     location: Optional[str] = Form(None), # location is in the fomat of "lat,long"
-    time: int = Form(None),
+    time: Optional[int] = Form(None),
     image: Optional[UploadFile] = File(None),
 ):
-    # debug statements to check the inputs
-    print("user_id", user_id)
-    print("description", description)
-    print("title", title)
-    print("location", location)
-    print("time", time)
-    print("image", image)
-    print("\n")
+    print(time, location, title, description, user_id)
     # Check if the user exists
     if not report_service.check_user_exists(user_id):
         return JSONResponse(status_code=404, content={"message": "User not found"})

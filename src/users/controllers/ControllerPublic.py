@@ -42,13 +42,20 @@ async def register_user(user: UserRegister):
 @router.post("/login", response_model=str)
 async def login_user(user: UserLogin):
     """Login a user."""
-    status_code, token = auth_service.login(user.username, user.password)
+    status_code, res = auth_service.login(user.username, user.password)
     if status_code == 200:
         # Set the cookie in the response
-        response = JSONResponse(content={"token": token}, status_code=status_code)
+        response = JSONResponse(content={"token": res['token'], "user_id": res['user_id']}, status_code=status_code)
         response.set_cookie(
             key="access_token",
-            value=token,
+            value=res['token'],
+            httponly=True,  # This makes the cookie inaccessible to JavaScript (increases security)
+            max_age=86400,  # Set the cookie to expire after 1 day (86400 seconds)
+            samesite="Lax",  # Adjust according to your requirements (Lax, Strict, None)
+        )
+        response.set_cookie(
+            key="user_id",
+            value=res['user_id'],
             httponly=True,  # This makes the cookie inaccessible to JavaScript (increases security)
             max_age=86400,  # Set the cookie to expire after 1 day (86400 seconds)
             samesite="Lax",  # Adjust according to your requirements (Lax, Strict, None)

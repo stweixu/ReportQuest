@@ -93,14 +93,21 @@ class AuthService:
         print(result)
         if result:
             # get the username and password from the database
+            user_id = result[0]
             username = result[1]
             password_hash = result[2]
+            isAuthority = result[8]
+            isModerator = result[9]
             print(password_hash, password)
             if self.ph.verify(password_hash, password):
                 # create a new JWT token
+                # to return jwt token and user_id
                 token = jwt.encode(
                     {
                         "username": username,
+                        "user_id": user_id,
+                        "isAuthority": isAuthority,
+                        "isModerator": isModerator,
                         "expiration": int(
                             (datetime.now() + timedelta(hours=24)).timestamp()
                         ),
@@ -108,7 +115,8 @@ class AuthService:
                     JWT_SECRET,
                     algorithm="HS256",
                 )
-                return 200, token  # OK
+                print({"token": token, "user_id": user_id})
+                return 200, {"token": token, "user_id": user_id}
             else:
                 return 401, None  # Unauthorized
         else:
