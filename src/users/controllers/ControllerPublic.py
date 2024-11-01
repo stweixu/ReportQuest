@@ -56,7 +56,7 @@ async def login_user(user: UserLogin):
         response.set_cookie(
             key="user_id",
             value=res['user_id'],
-            httponly=True,  # This makes the cookie inaccessible to JavaScript (increases security)
+            httponly=False, # make accessible to JavaScript
             max_age=86400,  # Set the cookie to expire after 1 day (86400 seconds)
             samesite="Lax",  # Adjust according to your requirements (Lax, Strict, None)
         )
