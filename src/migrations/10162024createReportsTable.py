@@ -14,9 +14,9 @@ def up():
         ReportID TEXT PRIMARY KEY,  -- Store UUID as text
         Description TEXT,
         imagePath TEXT,
-        assignedAuthorityUEN TEXT,
         title TEXT,
-        UEN TEXT
+        Datetime INTEGER NOT NULL,  -- Unix timestamp
+        Location TEXT NOT NULL  -- Store location as text
     );
     """
     try:
@@ -25,14 +25,13 @@ def up():
         conn.commit()
         print("Report table created successfully.")
     except sqlite3.Error as e:
-        print(e)
+        print(f"Error creating Report table: {e}")
     finally:
         conn.close()
 
 
 def down():
     conn: sqlite3.Connection = sqlite3.connect("database/reports.db")
-
     """Delete the Report table if it exists."""
     drop_table_query = "DROP TABLE IF EXISTS Report;"
     try:
@@ -41,7 +40,7 @@ def down():
         conn.commit()
         print("Report table deleted successfully.")
     except sqlite3.Error as e:
-        print(e)
+        print(f"Error deleting Report table: {e}")
     finally:
         conn.close()
 

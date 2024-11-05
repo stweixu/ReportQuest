@@ -73,8 +73,8 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             description=fake.sentence(nb_words=10),
             image_path=fake.file_path(extension="jpg"),
             title=fake.catch_phrase(),
-            datetime=fake.unix_time(),  # Add a datetime field if required
-            location=fake.city()  # Add a location field if required
+            datetime=int(fake.unix_time()),  # Add a datetime field if required
+            location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}"  # Add a location field if required
         )
         reports.append(report)
 

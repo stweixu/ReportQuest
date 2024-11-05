@@ -1,6 +1,9 @@
 import sqlite3
 import time
+import uuid
+from src.reports.models.ReportModels import Report
 from src.reports.services.OllamaAsync import OllamaChat
+from src.reports.services.ReportService import ReportService
 import asyncio
 
 
@@ -45,9 +48,9 @@ class PointsService:
         if result:
             return result[0]
         else:
-            return -1
+            return 0
 
-    def update_point_for_user_id(self, user_id: str, points: int) -> int:
+    def update_point_for_user_id(self, user_id: str, points: int, report_id: str) -> int:
         # look up the points db and table
         # check user exists
         self.check_user_exists(user_id)
@@ -58,6 +61,10 @@ class PointsService:
         cursor = self.conn.cursor()
         cursor.execute(query, (points, int(time.time()), user_id))
         self.conn.commit()
+
+        # update the points in the report
+        report_service = ReportService(sqlite3.connect("database/reports.db"))
+        report_service.update_report_points(report_id, points)
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK
@@ -84,19 +91,33 @@ class PointsService:
         return addable_points
 
     async def evaluate_and_add_points(
-        self, user_id: str, image_path: str, text_description: str
+        self, report: Report
     ) -> None:
         # get the points from the user_id
         print("thinking....")
-        points = self.get_point_from_user_id(user_id)
-        if points == -1: # user DNE
+        print(f"user_id: {report.user_id}")
+        points = self.get_point_from_user_id(report.user_id)
+        if points == None: # user DNE
+            print("user DNE")
             return
+        
+        
+        # create an instance of the ReportService
+        report_service = ReportService(sqlite3.connect("database/reports.db"))
+        print(f"ReportService created at {report_service}")
+        # create the report in the database
+        status_code, report = report_service.create_report(report)
+        if status_code != 201:
+            print("Failed to create report")
+            return
+        print(f"Report created at {report.report_id}")
+
         # add the points to the user_id
-        new_points = await self.evalute_points(user_id, image_path, text_description)
+        new_points = await self.evalute_points(report.user_id, report.image_path, report.description)
         print(f"new points: {new_points}")
         if new_points:
             points += new_points
-            self.update_point_for_user_id(user_id, points)
+            self.update_point_for_user_id(report.user_id, points, report.report_id)
         return
 
     async def wipeClean(self) -> int:

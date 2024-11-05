@@ -1,5 +1,6 @@
 import asyncio
 import os
+import time
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 from typing import Optional
@@ -125,11 +126,13 @@ async def submit_report(
     user_id: str = Form(...),
     description: Optional[str] = Form(None),
     title: Optional[str] = Form(None),
-    location: Optional[str] = Form(None), # location is in the fomat of "lat,long"
-    time: Optional[int] = Form(None),
+    longitude: Optional[float] = Form(None),
+    latitude: Optional[float] = Form(None),
+    # location: Optional[str] = Form(None), # location is in the fomat of "lat,long"
+    incident_time: Optional[int] = Form(None),
     image: Optional[UploadFile] = File(None),
 ):
-    print(time, location, title, description, user_id)
+    print(incident_time, longitude, latitude, title, description, user_id)
     # Check if the user exists
     if not report_service.check_user_exists(user_id):
         return JSONResponse(status_code=404, content={"message": "User not found"})
@@ -156,10 +159,22 @@ async def submit_report(
         )
 
     print("Image saved at:", image_path)
+    # create the new report first
+    report = Report(
+        user_id=user_id,
+        severity=0,
+        status="Pending",
+        report_id=str(uuid.uuid4()),
+        description=description,
+        image_path=image_path,
+        title="",
+        datetime= incident_time or int(time.time()),
+        location=f"{latitude},{longitude}",
+    )
     # evalutae report with pointsservice, start the process and return true, do not await
     # asyncio.create_task(points_service.evaluate_and_add_points(user_id, image_path, description))
     asyncio.create_task(
-        points_service.evaluate_and_add_points(user_id, image_path, description)
+        points_service.evaluate_and_add_points(report)
     )
     return {"message": "Report received successfully"}
 

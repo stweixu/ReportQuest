@@ -148,6 +148,14 @@ class ReportService:
             self.conn.close()
             print("Database connection closed.")
 
+    def update_report_points(self, report_id: str, points: int) -> int:
+        """Update the points of a report in the database."""
+        update_query = "UPDATE Report SET Severity = ? WHERE ReportID = ?"
+        cursor = self.conn.cursor()
+        cursor.execute(update_query, (points, report_id))
+        self.conn.commit()
+        return 200
+
     def check_user_exists(self, user_id: str) -> bool:
         """Check if a user exists in the database using UserService."""
         return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)
