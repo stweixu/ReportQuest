@@ -2,7 +2,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from typing import Optional
 import uuid
 import sqlite3
-from src.rewards.models.RewardModel import Reward
+from src.rewards.models.RewardModel import Reward, RewardUpdate
 from src.rewards.services.RewardService import RewardService
 from fastapi.responses import FileResponse, JSONResponse
 import os
@@ -174,3 +174,13 @@ async def claim_reward(reward_identifier: str, user_id: str):
     elif status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to claim reward.")
     return {"detail": "Reward claimed successfully."}
+
+@router.put("/update/{reward_id}", response_model=dict)
+async def update_reward(reward_id: str, reward: RewardUpdate):
+    """Update a reward by its identifier."""
+    status_code = reward_service.update_reward(reward_id, reward)
+    if status_code == 404:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
+    elif status_code != 200:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update reward.")
+    return {"detail": "Reward updated successfully."}

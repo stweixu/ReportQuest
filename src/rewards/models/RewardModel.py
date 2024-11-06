@@ -4,6 +4,12 @@ import base64
 from datetime import datetime, timedelta
 from pydantic import BaseModel, Field
 
+class RewardUpdate(BaseModel):
+    description: str
+    pointsRequired: int = Field(..., gt=0)  # Points required must be positive
+    validity: int = Field(..., ge=0)        # Validity timestamp must be non-negative
+    availability: int = Field(..., ge=0)    # Availability must be non-negative
+
 class Reward(BaseModel):
     rewardID: str = Field(default_factory=lambda: str(uuid.uuid4()))
     description: str

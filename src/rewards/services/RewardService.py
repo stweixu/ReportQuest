@@ -3,7 +3,7 @@ import sqlite3
 import time
 from typing import List, Optional, Tuple
 from src.rewards.models.MyRewards import MyRewards
-from src.rewards.models.RewardModel import Reward  
+from src.rewards.models.RewardModel import Reward, RewardUpdate  
 
 class RewardService:
     def __init__(self, conn : sqlite3.Connection):
@@ -65,6 +65,19 @@ class RewardService:
             for result in results
         ]
         return 200, rewards
+    
+    def update_reward(self, reward_id: str, reward: RewardUpdate) -> int:
+        query = "UPDATE Reward SET description = ?, pointsRequired = ?, validity = ?, availability = ? WHERE rewardId = ?;"
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query, (reward.description, reward.pointsRequired, reward.validity, reward.availability, reward_id))
+            self.conn.commit()
+            print(self.read_all_rewards())
+            print('done')
+            return 200
+        except sqlite3.Error as e:
+            print(e)
+            return 400
     
     def get_user_rewards(self, user_id: str) -> List[MyRewards]:
         conn = sqlite3.connect("database/myRewards.db")
