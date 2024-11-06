@@ -118,6 +118,12 @@ class PointsService:
         if new_points:
             points += new_points
             self.update_point_for_user_id(report.user_id, points, report.report_id)
+        # identify the relevant authority
+        result = await self.ollama.get_relevant_authority_ollama(report.description)
+        print(f"Relevant authority: {result}")
+        lat, long = report.location.split(",")
+        nearest = await self.ollama.find_nearest_authority(float(lat),float(long),result)
+        print(nearest)
         return
 
     async def wipeClean(self) -> int:
