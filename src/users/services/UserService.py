@@ -140,6 +140,7 @@ class UserService:
         cursor = self.conn.cursor()
         cursor.execute(update_query, (points, str(user_id)))
         self.conn.commit()
+        print("poop")
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK

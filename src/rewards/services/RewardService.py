@@ -99,8 +99,14 @@ class RewardService:
         reward :Reward = res[1]
         # look up the cost
         cost = reward.pointsRequired
-        # update the points in user DB
+        # lookup points in user DB
         conn_user = sqlite3.connect("database/users.db")
+        cursor = conn_user.cursor()
+        cursor.execute("SELECT Points FROM User WHERE UserID = ?;", (user_id,))
+        points = cursor.fetchone()[0]
+        if points < cost:
+            return 400, None
+        # update the points in user DB
         update_query = "UPDATE User SET Points = Points - ? WHERE UserID = ?;"
         cursor = conn_user.cursor()
         cursor.execute(update_query, (cost, user_id))

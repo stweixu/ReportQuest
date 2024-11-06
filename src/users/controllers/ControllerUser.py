@@ -64,7 +64,7 @@ async def create_user(user: UserCreate):
         )
 
 
-@router.put("/", response_model=UserRead)
+@router.put("/")
 async def update_user(user_id: uuid.UUID, points: int):
     """Update user points."""
     status_code = user_service.update_user_points(user_id, points)
