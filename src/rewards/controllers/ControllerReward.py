@@ -117,7 +117,10 @@ async def get_reward_image(reward_identifier: str):
     # Define the path to the images directory
     image_dir = "voucherimg"
     # Construct the image file path (assuming .png extension)
-    image_path = os.path.join(image_dir, f"{reward_identifier}.png")
+    if '-' in reward_identifier:
+        # split the reward identifier by -
+        reward_identifier_lhs = reward_identifier.split("-")[0]
+    image_path = os.path.join(image_dir, f"{reward_identifier_lhs}.png")
     
     # Check if the image exists
     if not os.path.isfile(image_path):
@@ -137,13 +140,10 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
 
-    if '-' in reward_identifier:
-        # split the reward identifier by -
-        reward_identifier_lhs = reward_identifier.split("-")[0]
 
     # Define the image path based on the identifier and original extension
     file_extension = file.filename.split(".")[-1].lower()
-    image_path = os.path.join(image_dir, f"{reward_identifier_lhs}.{file_extension}")
+    image_path = os.path.join(image_dir, f"{reward_identifier}.{file_extension}")
     
     # Save the uploaded file
     try:
