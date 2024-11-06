@@ -1,9 +1,13 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from typing import Optional
 import uuid
 import sqlite3
 from src.rewards.models.RewardModel import Reward
 from src.rewards.services.RewardService import RewardService
+from fastapi.responses import FileResponse, JSONResponse
+import os
+
+
 conn=sqlite3.connect("database/rewards.db")
 router = APIRouter(prefix="/rewards")
 
@@ -105,3 +109,46 @@ async def wipe_rewards():
     if status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to wipe rewards.")
     return {"detail": "All rewards wiped successfully."}
+
+
+@router.get("/{reward_identifier}/image", response_class=FileResponse)
+async def get_reward_image(reward_identifier: str):
+    """Retrieve the image corresponding to the reward identifier."""
+    # Define the path to the images directory
+    image_dir = "voucherimg"
+    # Construct the image file path (assuming .png extension)
+    image_path = os.path.join(image_dir, f"{reward_identifier}.png")
+    
+    # Check if the image exists
+    if not os.path.isfile(image_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Image not found"
+        )
+    
+    # Return the image file
+    return FileResponse(image_path, media_type="image/png")
+
+@router.post("/{reward_identifier}/image", response_class=JSONResponse)
+async def upload_reward_image(reward_identifier: str, file: UploadFile = File(...)):
+    """Upload an image corresponding to the reward identifier."""
+    # Define the path to the images directory
+    image_dir = "voucherimg"
+    # Ensure the directory exists
+    os.makedirs(image_dir, exist_ok=True)
+    
+    # Define the image path based on the identifier and original extension
+    file_extension = file.filename.split(".")[-1]
+    image_path = os.path.join(image_dir, f"{reward_identifier}.{file_extension}")
+    
+    # Save the uploaded file
+    try:
+        with open(image_path, "wb") as image_file:
+            image_file.write(await file.read())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save image: {str(e)}"
+        )
+    
+    return {"detail": "Image uploaded successfully.", "path": image_path}

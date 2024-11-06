@@ -22,8 +22,8 @@ conn = sqlite3.connect("database/reports.db")
 def create_report(report: Report) -> Tuple[int, Optional[Report]]:
     """Insert a new report into the Report table."""
     insert_query = """
-        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title)
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title, Datetime, Location)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
     try:
         cursor = conn.cursor()
@@ -37,6 +37,8 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
                 report.description,
                 report.image_path,
                 report.title,  # No longer including UEN and assigned_authority_uen
+                report.datetime,
+                report.location
             ),
         )
         conn.commit()
