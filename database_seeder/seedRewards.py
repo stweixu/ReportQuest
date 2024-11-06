@@ -12,7 +12,6 @@ class Reward:
         availability: int,
         validity: int = 0,
         rewardID: str = None,
-        userID: str = None,
     ):
         self.rewardID: str = rewardID if rewardID else uuid.uuid4()
         self.description: str = description
@@ -21,7 +20,6 @@ class Reward:
         self.availability: int = (
             availability  # Uint16 in the diagram, count of redeemable items
         )
-        self.userID: str = userID if userID else str(uuid.uuid4())
 
     def generateReward(self, duration: int) -> str:
         """
@@ -76,59 +74,59 @@ class Reward:
     def __repr__(self) -> str:
         return (
             f"Reward(rewardID={self.rewardID}, description={self.description}, pointsRequired={self.pointsRequired}, "
-            f"validity={self.validity}, availability={self.availability}, userID={self.userID})"
+            f"validity={self.validity}, availability={self.availability})"
         )
 
 
-if __name__ == "__main__":
-    # Create a Reward object
-    reward = Reward("RW123", "GRABVOUCHER5$", 100, 30, 50)
+# if __name__ == "__main__":
+#     # Create a Reward object
+#     reward = Reward("RW123", "GRABVOUCHER5$", 100, 30, 50)
 
-    # Test: Generate a Base64-encoded reward string
-    duration = 3
-    encoded_reward = reward.generateReward(duration)
-    print(f"Encoded Reward: {encoded_reward}")
+#     # Test: Generate a Base64-encoded reward string
+#     duration = 3
+#     encoded_reward = reward.generateReward(duration)
+#     print(f"Encoded Reward: {encoded_reward}")
 
-    # Expected output: R1JBQlZPVUNIRVI1JCsxMjM5ODEyMw==
+#     # Expected output: R1JBQlZPVUNIRVI1JCsxMjM5ODEyMw==
 
-    # Test: Decode the Base64-encoded reward string
-    decoded_reward = reward.decodeReward(encoded_reward)
-    print(f"Decoded Reward: {decoded_reward}")
+#     # Test: Decode the Base64-encoded reward string
+#     decoded_reward = reward.decodeReward(encoded_reward)
+#     print(f"Decoded Reward: {decoded_reward}")
 
-    # split the decoded by +
-    r = decoded_reward.split("+")
-    # convert the timestamp into day to see
-    dt_object = datetime.fromtimestamp(int(r[1]))
+#     # split the decoded by +
+#     r = decoded_reward.split("+")
+#     # convert the timestamp into day to see
+#     dt_object = datetime.fromtimestamp(int(r[1]))
 
-    # Format the datetime object to 'yyyy-mm-dd'
-    formatted_date = dt_object.strftime("%Y-%m-%d")
-    print(formatted_date)
+#     # Format the datetime object to 'yyyy-mm-dd'
+#     formatted_date = dt_object.strftime("%Y-%m-%d")
+#     print(formatted_date)
 
-    # Expected output: GRABVOUCHER5$+12398123
+#     # Expected output: GRABVOUCHER5$+12398123
 
-    # Test: Get validity of the reward
-    is_valid = reward.getValidity()
-    print(f"Is Reward Valid? {is_valid}")
+#     # Test: Get validity of the reward
+#     is_valid = reward.getValidity()
+#     print(f"Is Reward Valid? {is_valid}")
 
-    # Expected output: True (since the validity is set to 30)
+#     # Expected output: True (since the validity is set to 30)
 
-    # Test: Get the points required to redeem the reward
-    points_required = reward.getPointsRequired()
-    print(f"Points Required: {points_required}")
+#     # Test: Get the points required to redeem the reward
+#     points_required = reward.getPointsRequired()
+#     print(f"Points Required: {points_required}")
 
-    # Expected output: 100
+#     # Expected output: 100
 
-    # Test: Get the availability of the reward
-    availability = reward.getAvailability()
-    print(f"Availability: {availability}")
+#     # Test: Get the availability of the reward
+#     availability = reward.getAvailability()
+#     print(f"Availability: {availability}")
 
-    # Expected output: 50
+#     # Expected output: 50
 
-    # Output the full Reward object
-    print(reward)
+#     # Output the full Reward object
+#     print(reward)
 
-    # Expected output:
-    # Reward(rewardID=RW123, description=GRABVOUCHER5$, pointsRequired=100, validity=30, availability=50, userID=<userID>)
+#     # Expected output:
+#     # Reward(rewardID=RW123, description=GRABVOUCHER5$, pointsRequired=100, validity=30, availability=50, userID=<userID>)
 
 # Establish database connection
 conn = sqlite3.connect("database/rewards.db")
@@ -137,8 +135,8 @@ conn = sqlite3.connect("database/rewards.db")
 def create_reward(reward: Reward) -> None:
     """Insert a new reward into the Reward table."""
     insert_query = """
-    INSERT INTO Reward (RewardID, Description, PointsRequired, Validity, Availability, UserID)
-    VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO Reward (RewardID, Description, PointsRequired, Validity, Availability)
+    VALUES (?, ?, ?, ?, ?);
     """
     try:
         cursor = conn.cursor()
@@ -150,7 +148,6 @@ def create_reward(reward: Reward) -> None:
                 reward.pointsRequired,
                 reward.validity,
                 reward.availability,
-                str(reward.userID),
             ),
         )
         conn.commit()

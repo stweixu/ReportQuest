@@ -136,7 +136,11 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
     image_dir = "voucherimg"
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
-    
+
+    if '-' in reward_identifier:
+        # split the reward identifier by -
+        reward_identifier_lhs = reward_identifier.split("-")[0]
+
     # Define the image path based on the identifier and original extension
     file_extension = file.filename.split(".")[-1]
     image_path = os.path.join(image_dir, f"{reward_identifier}.{file_extension}")

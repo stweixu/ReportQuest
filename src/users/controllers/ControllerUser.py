@@ -1,5 +1,6 @@
+import os
 from fastapi import APIRouter, HTTPException, status, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from typing import Optional
 import sqlite3
 import uuid
@@ -105,3 +106,21 @@ async def wipe_users():
             detail="Failed to wipe users.",
         )
     return {"detail": "All users wiped successfully."}
+
+@router.get("/profilePicture/{user_id}", response_class=Response)
+async def get_profile_picture(user_id: uuid.UUID):
+    """Retrieve the profile picture of a user."""
+    # Define the path to the images directory
+    image_dir = "profilepics"
+    # Construct the image file path (assuming .png extension)
+    image_path = f"{image_dir}/{user_id}.png"
+    
+    # Check if the image exists
+    if not os.path.isfile(image_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Image not found"
+        )
+    
+    # Return the image file
+    return FileResponse(image_path, media_type="image/png")

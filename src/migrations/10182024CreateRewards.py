@@ -12,8 +12,7 @@ def up():
         Description TEXT NOT NULL,
         PointsRequired INTEGER NOT NULL CHECK(PointsRequired > 0),  -- Ensure points required is greater than zero
         Validity INTEGER NOT NULL ,
-        Availability INTEGER NOT NULL CHECK(Availability >= 0),  -- Ensure availability is non-negative
-        UserID TEXT NOT NULL
+        Availability INTEGER NOT NULL CHECK(Availability >= 0)  -- Ensure availability is non-negative
         );
     """
     try:

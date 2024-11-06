@@ -15,8 +15,7 @@ class RewardService:
             Description TEXT NOT NULL,
             PointsRequired INTEGER NOT NULL,
             Validity INTEGER,
-            Availability INTEGER NOT NULL,
-            UserID TEXT
+            Availability INTEGER NOT NULL
         );
         """
         cursor = self.conn.cursor()
@@ -25,8 +24,8 @@ class RewardService:
 
     def create_reward(self, reward: Reward) -> int:
         insert_query = """
-        INSERT INTO Reward (RewardID, Description, PointsRequired, Validity, Availability, UserID)
-        VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO Reward (RewardID, Description, PointsRequired, Validity, Availability)
+        VALUES (?, ?, ?, ?, ?);
         """
         try:
             cursor = self.conn.cursor()
@@ -62,7 +61,6 @@ class RewardService:
                 pointsRequired=result[2],
                 validity=result[3],
                 availability=result[4],
-                userID=result[5],
             )
             for result in results
         ]
@@ -80,7 +78,6 @@ class RewardService:
                 pointsRequired=result[2],
                 validity=result[3],
                 availability=result[4],
-                userID=result[5],
             )
             return 200, reward
         else:

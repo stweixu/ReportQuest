@@ -10,7 +10,6 @@ class Reward(BaseModel):
     pointsRequired: int = Field(..., gt=0)  # Points required must be positive
     validity: int = Field(..., ge=0)        # Validity timestamp must be non-negative
     availability: int = Field(..., ge=0)    # Availability must be non-negative
-    userID: str = Field(default_factory=lambda: str(uuid.uuid4()))
 
     def generateReward(self, duration: int) -> str:
         """
@@ -38,5 +37,3 @@ class Reward(BaseModel):
         current_timestamp = int(datetime.now().timestamp())
         return current_timestamp < self.validity
 
-    class Config:
-        orm_mode = True  # For compatibility with ORMs like SQLAlchemy
