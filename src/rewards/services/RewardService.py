@@ -1,12 +1,13 @@
 # RewardService.py
 import sqlite3
+import time
 from typing import List, Optional, Tuple
-from src.rewards.models.RewardModel import Reward  # Adjust import based on your project structure
+from src.rewards.models.MyRewards import MyRewards
+from src.rewards.models.RewardModel import Reward  
 
 class RewardService:
     def __init__(self, conn : sqlite3.Connection):
         self.conn = conn
-        self.create_reward_table()
 
     def create_reward_table(self):
         create_table_query = """
@@ -36,8 +37,7 @@ class RewardService:
                     reward.description,
                     reward.pointsRequired,
                     reward.validity,
-                    reward.availability,
-                    reward.userID,
+                    reward.availability
                 ),
             )
             self.conn.commit()
@@ -65,11 +65,84 @@ class RewardService:
             for result in results
         ]
         return 200, rewards
+    
+    def get_user_rewards(self, user_id: str) -> List[MyRewards]:
+        conn = sqlite3.connect("database/myRewards.db")
+        query = "SELECT rewardId, userId, expiry, giftcode FROM MyRewards WHERE userId = ?;"
+        rewards = []
+        
+        try:
+            cursor = conn.cursor()
+            cursor.execute(query, (user_id,))
+            rows = cursor.fetchall()
+            
+            for row in rows:
+                reward = MyRewards(
+                    reward_id=row[0],
+                    user_id=row[1],
+                    expiry=row[2],  # Convert Unix timestamp to datetime
+                    giftcode=row[3]
+                )
+                rewards.append(reward)
+                
+        except sqlite3.Error as e:
+            print(f"Error retrieving rewards: {e}")
+        finally:
+            conn.close()
+        return rewards
 
-    def read_reward(self, reward_id: str) -> Tuple[int, Optional[Reward]]:
+    def claim_reward_by_name(self, name: str, user_id: str) -> Tuple[int, Optional[Reward]]:
+        # lookup the reward
+        res = self.read_reward_by_name(name)
+        if res[1] == None:
+            return 404, None
+        reward :Reward = res[1]
+        # look up the cost
+        cost = reward.pointsRequired
+        # update the points in user DB
+        conn_user = sqlite3.connect("database/users.db")
+        update_query = "UPDATE User SET Points = Points - ? WHERE UserID = ?;"
+        cursor = conn_user.cursor()
+        cursor.execute(update_query, (cost, user_id))
+        conn_user.commit()
+        # create the MyRewards entry
+        conn_myrewards = sqlite3.connect("database/myRewards.db")
+
+        insert_query = "INSERT INTO MyRewards (RewardID, UserID, Expiry, Giftcode) VALUES (?, ?, ?, ?);"
+        cursor = conn_myrewards.cursor()
+        cursor.execute(insert_query, (reward.rewardID, user_id, reward.validity, self.generate_gift_code(reward.rewardID, user_id)))
+        conn_myrewards.commit()
+
+        # close the connections
+        conn_user.close()
+        conn_myrewards.close()
+        return 200, reward
+        
+    def generate_gift_code(self, reward_id: str, user_id: str) -> str:
+        # random recipe
+        return reward_id + user_id + str(int(time.time()))
+
+    def read_reward_by_id(self, reward_id: str) -> Tuple[int, Optional[Reward]]:
         select_query = "SELECT * FROM Reward WHERE RewardID = ?;"
         cursor = self.conn.cursor()
         cursor.execute(select_query, (reward_id,))
+        result = cursor.fetchone()
+        if result:
+            reward = Reward(
+                rewardID=result[0],
+                description=result[1],
+                pointsRequired=result[2],
+                validity=result[3],
+                availability=result[4],
+            )
+            return 200, reward
+        else:
+            return 404, None  # Not Found
+        
+    def read_reward_by_name(self, name: str) -> Tuple[int, Optional[Reward]]:
+        select_query = "SELECT * FROM Reward WHERE Description = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(select_query, (name,))
         result = cursor.fetchone()
         if result:
             reward = Reward(

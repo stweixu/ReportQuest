@@ -156,3 +156,21 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
         )
     
     return {"detail": "Image uploaded successfully.", "path": image_path}
+
+@router.get("/myrewards/{user_id}", response_model=list[Reward])
+async def get_my_rewards(user_id: str):
+    """Retrieve all rewards submitted by a specific user."""
+    status_code, rewards = reward_service.read_all_rewards()
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail="Failed to retrieve rewards.")
+    return rewards
+
+@router.post("/claim/{reward_identifier}", response_model=dict)
+async def claim_reward(reward_identifier: str, user_id: str):
+    """Claim a reward by its identifier."""
+    status_code, reward = reward_service.claim_reward_by_name(reward_identifier, user_id)
+    if status_code == 404:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
+    elif status_code != 200:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to claim reward.")
+    return {"detail": "Reward claimed successfully."}
