@@ -143,7 +143,7 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
 
     # Define the image path based on the identifier and original extension
     file_extension = file.filename.split(".")[-1]
-    image_path = os.path.join(image_dir, f"{reward_identifier}.{file_extension}")
+    image_path = os.path.join(image_dir, f"{reward_identifier_lhs}.{file_extension}")
     
     # Save the uploaded file
     try:
