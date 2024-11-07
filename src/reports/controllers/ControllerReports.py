@@ -2,7 +2,7 @@ import asyncio
 import os
 import time
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from typing import Optional
 import sqlite3
 from PIL import Image
@@ -142,10 +142,13 @@ async def submit_report(
     # Read the file contents
     contents = await image.read()
 
+    # generate unique report-id
+    report_id = str(uuid.uuid4())
+
     # Generate a timestamp and create a filename with it
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     file_extension = image.filename.split(".")[-1]
-    unique_filename = f"{timestamp}_{image.filename}.{file_extension}"
+    unique_filename = f"{report_id}.{file_extension}"
     image_path = os.path.join(IMAGE_SAVE_DIRECTORY, unique_filename)
 
     # Save the image
@@ -164,7 +167,7 @@ async def submit_report(
         user_id=user_id,
         severity=0,
         status="Pending",
-        report_id=str(uuid.uuid4()),
+        report_id=report_id,
         description=description,
         image_path=image_path,
         title="",
@@ -193,3 +196,20 @@ async def delete_report(report_id: str):
             detail="Failed to delete report.",
         )
     return {"detail": "Report deleted successfully."}
+
+
+@router.get("/reportPicture/{report_id}")
+async def get_report_picture(report_id: uuid.UUID):
+    """Retrieve the report picture of a report."""
+    # Define the path to the images directory
+    image_dir = "images"
+    # Construct the image file path (assuming .png extension)
+    image_path = f"{image_dir}/{report_id}.png"
+    default_path = f"{image_dir}/default.png"
+    
+    # Check if the image exists
+    if not os.path.isfile(image_path):
+        return FileResponse(default_path, media_type="image/png")
+    
+    # Return the image file as a response
+    return FileResponse(image_path, media_type="image/png")

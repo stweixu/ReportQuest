@@ -140,7 +140,6 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
 
-
     # Define the image path based on the identifier and original extension
     file_extension = file.filename.split(".")[-1].lower()
     image_path = os.path.join(image_dir, f"{reward_identifier}.{file_extension}")
@@ -165,10 +164,10 @@ async def get_my_rewards(user_id: str):
         raise HTTPException(status_code=status_code, detail="Failed to retrieve rewards.")
     return rewards
 
-@router.post("/claim/{reward_identifier}", response_model=dict)
-async def claim_reward(reward_identifier: str, user_id: str):
+@router.post("/claim/{reward_id}", response_model=dict)
+async def claim_reward(reward_id: str, user_id: str):
     """Claim a reward by its identifier."""
-    status_code, reward = reward_service.claim_reward_by_name(reward_identifier, user_id)
+    status_code, reward = reward_service.claim_reward_by_id(reward_id, user_id)
     if status_code == 404:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
     elif status_code != 200:
