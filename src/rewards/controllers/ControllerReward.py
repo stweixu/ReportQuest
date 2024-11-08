@@ -185,6 +185,8 @@ async def update_reward(reward_id: str, reward: RewardUpdate):
     status_code = reward_service.update_reward(reward_id, reward)
     if status_code == 404:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
+    if status_code == 403:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insuffient points")
     elif status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update reward.")
     return {"detail": "Reward updated successfully."}

@@ -108,7 +108,7 @@ class RewardService:
     def claim_reward_by_id(self, reward_id: str, user_id: str) -> Tuple[int, Optional[Reward]]:
         # lookup the reward
         res = self.read_reward_by_id(reward_id)
-        if res[1] == None:
+        if res[1] == None: #not found
             return 404, None
         reward :Reward = res[1]
         # look up the cost
@@ -119,7 +119,7 @@ class RewardService:
         cursor.execute("SELECT Points FROM User WHERE UserID = ?;", (user_id,))
         points = cursor.fetchone()[0]
         if points < cost:
-            return 400, None
+            return 403, None
         # update the points in user DB
         update_query = "UPDATE User SET Points = Points - ? WHERE UserID = ?;"
         cursor = conn_user.cursor()
