@@ -12,3 +12,11 @@ class ResetPassword(BaseModel):
             userID=user_id,
             verificationKey=str(uuid.uuid4())  # Generate a unique verification key
         )
+    
+class PasswordResetRequest(BaseModel):
+    email: str
+
+
+class PasswordReset(BaseModel):
+    verification_key: str
+    new_password: str

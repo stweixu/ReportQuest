@@ -11,6 +11,8 @@ from src.users.models.UserModels import (
 )
 import sqlite3
 
+from src.users.models.PasswordReset import PasswordResetRequest, PasswordReset
+
 router = APIRouter(prefix="/public")
 
 conn = sqlite3.connect("database/users.db")
@@ -101,10 +103,10 @@ async def verify_user(verification_key: str):
             detail="Failed to verify user.",
         )
     
-@router.post("/password-reset-request")
-async def request_password_reset(email: str = Form(...)):
+@router.post("/password-reset-request/")
+async def request_password_reset(data: PasswordResetRequest):
     """Request a password reset email."""
-    status_code, response = auth_service.send_password_reset_email(email)
+    status_code, response = auth_service.send_password_reset_email(data.email)
     if status_code == 200:
         return JSONResponse(content={"message": "Password reset email sent successfully."}, status_code=status_code)
     elif status_code == 404:
@@ -119,10 +121,10 @@ async def request_password_reset(email: str = Form(...)):
         )
 
 
-@router.post("/password-reset")
-async def reset_password(verification_key: str = Form(...), new_password: str = Form(...)):
+@router.post("/password-reset/")
+async def reset_password(data: PasswordReset):
     """Reset a user's password using a verification key."""
-    status_code, response = auth_service.reset_password(verification_key, new_password)
+    status_code, response = auth_service.reset_password(data.verification_key, data.new_password)
     if status_code == 200:
         return JSONResponse(content={"message": "Password reset successfully."}, status_code=status_code)
     elif status_code == 404:

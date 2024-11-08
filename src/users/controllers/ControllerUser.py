@@ -133,10 +133,7 @@ async def get_profile_picture(user_id: uuid.UUID):
     
     # Check if the image exists
     if not os.path.isfile(image_path):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Image not found"
-        )
+        return FileResponse(f"{image_dir}/default.png", media_type="image/png")
     
     # Return the image file
     return FileResponse(image_path, media_type="image/png")
