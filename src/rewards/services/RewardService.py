@@ -3,7 +3,8 @@ import sqlite3
 import time
 from typing import List, Optional, Tuple
 from src.rewards.models.MyRewards import MyRewards
-from src.rewards.models.RewardModel import Reward, RewardUpdate  
+from src.rewards.models.RewardModel import Reward, RewardUpdate
+import uuid
 
 class RewardService:
     def __init__(self, conn : sqlite3.Connection):
@@ -104,9 +105,9 @@ class RewardService:
             conn.close()
         return rewards
 
-    def claim_reward_by_name(self, name: str, user_id: str) -> Tuple[int, Optional[Reward]]:
+    def claim_reward_by_id(self, reward_id: str, user_id: str) -> Tuple[int, Optional[Reward]]:
         # lookup the reward
-        res = self.read_reward_by_name(name)
+        res = self.read_reward_by_id(reward_id)
         if res[1] == None:
             return 404, None
         reward :Reward = res[1]
@@ -140,6 +141,13 @@ class RewardService:
     def generate_gift_code(self, reward_id: str, user_id: str) -> str:
         # random recipe
         return reward_id + user_id + str(int(time.time()))
+
+    def is_valid_uuid(self,val):
+        try:
+            uuid.UUID(str(val))
+            return True
+        except ValueError:
+            return False
 
     def read_reward_by_id(self, reward_id: str) -> Tuple[int, Optional[Reward]]:
         select_query = "SELECT * FROM Reward WHERE RewardID = ?;"

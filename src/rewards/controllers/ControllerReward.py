@@ -25,7 +25,7 @@ async def read_all_rewards():
 @router.get("/{reward_id}", response_model=Optional[Reward])
 async def read_reward_by_id(reward_id: str):
     """Retrieve a reward by its ID."""
-    status_code, reward = reward_service.read_reward(reward_id)
+    status_code, reward = reward_service.read_reward_by_id(reward_id)
     if status_code == 404:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
     elif status_code != 200:
@@ -117,10 +117,15 @@ async def get_reward_image(reward_identifier: str):
     # Define the path to the images directory
     image_dir = "voucherimg"
     # Construct the image file path (assuming .png extension)
-    if '-' in reward_identifier:
+    # check if the string is a uuid
+    if reward_service.is_valid_uuid(reward_identifier):
+        image_path = os.path.join(image_dir, f"{reward_identifier}.png")
+    elif '-' in reward_identifier:
         # split the reward identifier by -
         reward_identifier_lhs = reward_identifier.split("-")[0]
-    image_path = os.path.join(image_dir, f"{reward_identifier_lhs}.png")
+        image_path = os.path.join(image_dir, f"{reward_identifier_lhs}.png")
+    else:
+        image_path = os.path.join(image_dir, f"default.png")
     
     # Check if the image exists
     if not os.path.isfile(image_path):
