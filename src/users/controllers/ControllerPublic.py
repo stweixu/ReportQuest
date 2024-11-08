@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Response
+from fastapi import APIRouter, Form, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 from src.users.services.AuthService import AuthService
 from src.users.models.UserModels import (
@@ -99,4 +99,39 @@ async def verify_user(verification_key: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to verify user.",
+        )
+    
+@router.post("/password-reset-request")
+async def request_password_reset(email: str = Form(...)):
+    """Request a password reset email."""
+    status_code, response = auth_service.send_password_reset_email(email)
+    if status_code == 200:
+        return JSONResponse(content={"message": "Password reset email sent successfully."}, status_code=status_code)
+    elif status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Failed to send password reset email: Email not found.",
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send password reset email.",
+        )
+
+
+@router.post("/password-reset")
+async def reset_password(verification_key: str = Form(...), new_password: str = Form(...)):
+    """Reset a user's password using a verification key."""
+    status_code, response = auth_service.reset_password(verification_key, new_password)
+    if status_code == 200:
+        return JSONResponse(content={"message": "Password reset successfully."}, status_code=status_code)
+    elif status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid or expired verification key.",
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to reset password.",
         )

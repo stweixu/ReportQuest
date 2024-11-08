@@ -236,6 +236,80 @@ class AuthService:
         
         self.yag.send(to=email, subject=subject, contents=body)
 
+    def reset_password(self, verification_key: str, new_password: str):
+        """Reset a user's password using the provided verification key."""
+        cursor = self.conn.cursor()
+        
+        # Check the ResetPassword table for a valid verification key
+        query = "SELECT userID FROM ResetPassword WHERE verificationKey = ?"
+        cursor.execute(query, (verification_key,))
+        result = cursor.fetchone()
+        
+        if not result:
+            return 404, {"message": "Invalid or expired verification key."}
+        
+        user_id = result[0]
+        hashed_password = self.ph.hash(new_password)
+        
+        # Update the password in the User table
+        update_query = "UPDATE User SET passwordHash = ? WHERE userID = ?"
+        cursor.execute(update_query, (hashed_password, user_id))
+        
+        # Delete the used verification key from ResetPassword table
+        delete_query = "DELETE FROM ResetPassword WHERE verificationKey = ?"
+        cursor.execute(delete_query, (verification_key,))
+        
+        self.conn.commit()
+        return 200, {"message": "Password reset successfully."}
+
+    def send_password_reset_email(self, email: str):
+        """Send a password reset email with a unique verification link."""
+        # Check if the email exists in the User table
+        cursor = self.conn.cursor()
+        query = "SELECT userID FROM User WHERE emailAddress = ?"
+        cursor.execute(query, (email,))
+        result = cursor.fetchone()
+        
+        if not result:
+            return 404, {"message": "Email not found."}
+        
+        user_id = result[0]
+        verification_key = str(uuid.uuid4())
+        
+        # Insert the verification key into the ResetPassword table
+        insert_query = "INSERT INTO ResetPassword (userID, verificationKey) VALUES (?, ?)"
+        cursor.execute(insert_query, (user_id, verification_key))
+        self.conn.commit()
+        
+        # Prepare and send the password reset email
+        subject = "Password Reset Request"
+        reset_link = f"{FRONTEND_URL}/reset-password?verification_key={verification_key}"
+        body = f"""
+        <html>
+        <body>
+            <p>Hello,</p>
+            
+            <p>You recently requested to reset your password for your account. To reset your password, please click the button below:</p>
+            
+            <p style="text-align: center;">
+                <a href="{reset_link}" style="padding: 10px 20px; color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                    Reset Password
+                </a>
+            </p>
+            
+            <p>If the button doesn’t work, copy and paste this link into your browser:</p>
+            <p><a href="{reset_link}">{reset_link}</a></p>
+            
+            <p>If you have any questions or need further assistance, please reach out to our support team.</p>
+            
+            <p>Thank you,<br>
+            The {os.getenv("COMPANY_NAME", "Your Company")} Team</p>
+        </body>
+        </html>
+        """
+        self.yag.send(to=email, subject=subject, contents=body)
+        return 200, {"message": "Password reset email sent successfully."}
+
 
     def verify_user(self, verification_key: str):
         """Verify an unverified user and move them to the main User table."""
