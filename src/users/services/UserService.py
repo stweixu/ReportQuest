@@ -14,6 +14,7 @@ from src.users.models.UserModels import (
     User,
     UserLogin,
     StatusResponse,
+    UserUpdate
 )
 
 
@@ -141,6 +142,16 @@ class UserService:
         cursor.execute(update_query, (points, str(user_id)))
         self.conn.commit()
         print("poop")
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+    
+    def update_user(self, user_id: uuid.UUID, user: UserUpdate) -> int:
+        """Update a user in the User table."""
+        update_query = "UPDATE User SET userName = ?, emailAddress = ? WHERE userID = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(update_query, (user.userName, user.emailAddress, str(user_id)))
+        self.conn.commit()
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK

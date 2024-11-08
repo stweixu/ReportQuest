@@ -12,6 +12,7 @@ from src.users.models.UserModels import (
     User,
     UserLogin,
     StatusResponse,
+    UserUpdate
 )
 from src.users.services.UserService import UserService
 
@@ -64,8 +65,8 @@ async def create_user(user: UserCreate):
         )
 
 
-@router.put("/")
-async def update_user(user_id: uuid.UUID, points: int):
+@router.put("/updatepoints")
+async def update_user_points(user_id: uuid.UUID, points: int):
     """Update user points."""
     status_code = user_service.update_user_points(user_id, points)
     if status_code == 404:
@@ -78,6 +79,21 @@ async def update_user(user_id: uuid.UUID, points: int):
             detail="Failed to update user points.",
         )
     return {"detail": "User points updated successfully."}
+
+@router.put("/{user_id}/update", response_model=dict)
+async def update_user(user_id: uuid.UUID, user: UserUpdate):
+    """Update a user."""
+    status_code = user_service.update_user(user_id, User(**user.dict()))
+    if status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    elif status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update user.",
+        )    
+    return {"detail": "User updated successfully."}
 
 
 @router.delete("/")
