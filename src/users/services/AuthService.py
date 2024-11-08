@@ -203,7 +203,7 @@ class AuthService:
     def send_verification_email(self, email: str, username: str, verification_key: str) -> None:
         """Send verification email with a unique verification link."""
         subject = "Please Confirm Your Email to Complete Registration"
-        verification_link = f"{FRONTEND_URL}/verify/{verification_key}"
+        verification_link = f"{FRONTEND_URL}/login?verification_key={verification_key}"
         
         # Use an HTML email template for a more professional look
         body = f"""
