@@ -83,7 +83,7 @@ async def update_user_points(user_id: uuid.UUID, points: int):
 @router.put("/{user_id}/update", response_model=dict)
 async def update_user(user_id: uuid.UUID, user: UserUpdate):
     """Update a user."""
-    status_code = user_service.update_user(user_id, User(**user.dict()))
+    status_code = user_service.update_user(user_id, user=user)
     if status_code == 404:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
