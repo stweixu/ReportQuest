@@ -89,6 +89,7 @@ predefined_uuids = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174003"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174004"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174005"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174006"),
 ]
 
 # Dummy users with explicit UUIDs for reproducibility
@@ -164,6 +165,18 @@ dummy_users = [
         isAuthority=True,
         isModerator=False,
         userID=predefined_uuids[5],
+    ),
+    User(
+        userName="admin",
+        passwordHash=ph.hash("password1"),
+        emailAddress="admin@example.com",
+        loginStatus=False,
+        points=0,
+        notificationPreference="sms",
+        notificationEnabled=True,
+        isAuthority=False,
+        isModerator=True,
+        userID=predefined_uuids[6],
     ),
 ]
 
