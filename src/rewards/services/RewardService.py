@@ -116,12 +116,13 @@ class RewardService:
         # lookup points in user DB
         conn_user = sqlite3.connect("database/users.db")
         cursor = conn_user.cursor()
-        cursor.execute("SELECT Points FROM User WHERE UserID = ?;", (user_id,))
+        cursor.execute("SELECT points FROM User WHERE userID = ?;", (user_id,))
         points = cursor.fetchone()[0]
         if points < cost:
             return 403, None
+        print("hello")
         # update the points in user DB
-        update_query = "UPDATE User SET Points = Points - ? WHERE UserID = ?;"
+        update_query = "UPDATE User SET points = points - ? WHERE userID = ?;"
         cursor = conn_user.cursor()
         cursor.execute(update_query, (cost, user_id))
         conn_user.commit()

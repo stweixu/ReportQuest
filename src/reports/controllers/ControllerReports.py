@@ -22,7 +22,7 @@ report_service = ReportService(
     sqlite3.connect("database/reports.db")
 )  # Instantiate the ReportService
 points_service = PointsService(
-    sqlite3.connect("database/points.db")
+    sqlite3.connect("database/users.db")
 )  # Instantiate the PointsService
 
 IMAGE_SAVE_DIRECTORY = "images"

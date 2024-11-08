@@ -175,6 +175,8 @@ async def claim_reward(reward_id: str, user_id: str):
     status_code, reward = reward_service.claim_reward_by_id(reward_id, user_id)
     if status_code == 404:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found")
+    elif status_code == 403:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insuffient points")
     elif status_code != 200:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to claim reward.")
     return {"detail": "Reward claimed successfully."}
