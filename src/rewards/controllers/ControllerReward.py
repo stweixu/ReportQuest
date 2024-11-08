@@ -164,7 +164,7 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
 @router.get("/myrewards/{user_id}", response_model=list[Reward])
 async def get_my_rewards(user_id: str):
     """Retrieve all rewards submitted by a specific user."""
-    status_code, rewards = reward_service.read_all_rewards()
+    status_code, rewards = reward_service.get_user_rewards(user_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail="Failed to retrieve rewards.")
     return rewards
