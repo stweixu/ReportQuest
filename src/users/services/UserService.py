@@ -151,14 +151,14 @@ class UserService:
         # check if username is already taken
         query = "SELECT * FROM User WHERE userName = ? AND userID <> ?"
         cursor = self.conn.cursor()
-        cursor.execute(query, (user.userName, user_id))
+        cursor.execute(query, (user.userName, str(user_id)))
         result = cursor.fetchone()
         if result:
             return (422, None)  # Bad Request user already exists
         # check if email is already taken
         query = "SELECT * FROM User WHERE emailAddress = ? AND userID <> ?"
         cursor = self.conn.cursor()
-        cursor.execute(query, (user.emailAddress, user_id))
+        cursor.execute(query, (user.emailAddress, str(user_id)))
         result = cursor.fetchone()
         if result:
             return (422, None)  # Bad Request email already exists
