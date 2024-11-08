@@ -23,14 +23,15 @@ async def register_user(user: UserRegister):
     status_code, user_read = auth_service.register(
         user.userName, user.password, user.emailAddress
     )
+    print("Poop")
     if status_code == 400:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Failed to register user: User already exists.",
         )
-    elif status_code == 201:
+    elif status_code == 200:
         return Response(
-            content="User registered successfully.", status_code=status.HTTP_201_CREATED
+            content="User registered successfully.", status_code=status.HTTP_200_OK
         )
     elif status_code == 422:
         raise HTTPException(
@@ -80,4 +81,22 @@ async def login_user(user: UserLogin):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to login user.",
+        )
+    
+@router.get("/verify/{verification_key}")
+async def verify_user(verification_key: str):
+    """Verify a user with the provided verification key."""
+    status_code, response = auth_service.verify_user(verification_key)
+    print(status_code, response)
+    if status_code == 200:
+        return JSONResponse(response)
+    elif status_code == 404:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid or expired verification key.",
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to verify user.",
         )
