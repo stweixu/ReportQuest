@@ -2,6 +2,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from typing import Optional
 import uuid
 import sqlite3
+from src.rewards.models import MyRewards
 from src.rewards.models.RewardModel import Reward, RewardUpdate
 from src.rewards.services.RewardService import RewardService
 from fastapi.responses import FileResponse, JSONResponse
@@ -161,7 +162,7 @@ async def upload_reward_image(reward_identifier: str, file: UploadFile = File(..
     
     return {"detail": "Image uploaded successfully.", "path": image_path}
 
-@router.get("/myrewards/{user_id}", response_model=list[Reward])
+@router.get("/myrewards/{user_id}")
 async def get_my_rewards(user_id: str):
     """Retrieve all rewards submitted by a specific user."""
     status_code, rewards = reward_service.get_user_rewards(user_id)

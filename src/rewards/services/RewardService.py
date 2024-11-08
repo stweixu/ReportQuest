@@ -103,7 +103,7 @@ class RewardService:
             print(f"Error retrieving rewards: {e}")
         finally:
             conn.close()
-        return rewards
+        return 200, rewards
 
     def claim_reward_by_id(self, reward_id: str, user_id: str) -> Tuple[int, Optional[Reward]]:
         # lookup the reward
