@@ -154,14 +154,14 @@ class UserService:
         cursor.execute(query, (user.userName,))
         result = cursor.fetchone()
         if result:
-            return (400, None)  # Bad Request user already exists
+            return (422, None)  # Bad Request user already exists
         # check if email is already taken
         query = "SELECT * FROM User WHERE emailAddress = ?"
         cursor = self.conn.cursor()
         cursor.execute(query, (user.emailAddress,))
         result = cursor.fetchone()
         if result:
-            return (400, None)  # Bad Request email already exists
+            return (422, None)  # Bad Request email already exists
         update_query = "UPDATE User SET userName = ?, emailAddress = ? WHERE userID = ?;"
         cursor = self.conn.cursor()
         cursor.execute(update_query, (user.userName, user.emailAddress, str(user_id)))

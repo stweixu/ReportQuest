@@ -32,6 +32,11 @@ async def register_user(user: UserRegister):
         return Response(
             content="User registered successfully.", status_code=status.HTTP_201_CREATED
         )
+    elif status_code == 422:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Failed to register user: Username or email already exists.",
+        )
     else:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
