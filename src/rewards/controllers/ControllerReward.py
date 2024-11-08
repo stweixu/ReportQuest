@@ -117,9 +117,12 @@ async def get_reward_image(reward_identifier: str):
     """Retrieve the image corresponding to the reward identifier."""
     # Define the path to the images directory
     image_dir = "voucherimg"
+    print("hello!")
     # Construct the image file path (assuming .png extension)
-    # check if the string is a uuid
-    if reward_service.is_valid_uuid(reward_identifier):
+    # check if reward_id is a png file
+    reward_identifier = reward_identifier.lower()
+    print(reward_identifier)
+    if os.path.isfile(os.path.join(image_dir, f"{reward_identifier}.png")):
         image_path = os.path.join(image_dir, f"{reward_identifier}.png")
     elif '-' in reward_identifier:
         # split the reward identifier by -
@@ -128,6 +131,7 @@ async def get_reward_image(reward_identifier: str):
     else:
         image_path = os.path.join(image_dir, f"default.png")
     
+    print(image_path)
     # Check if the image exists
     if not os.path.isfile(image_path):
         raise HTTPException(

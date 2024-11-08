@@ -1,4 +1,5 @@
 import sqlite3
+import time
 import uuid
 from datetime import datetime, timedelta
 import random
@@ -19,13 +20,24 @@ predefined_user_ids = [
     "123e4567-e89b-12d3-a456-426614174006",
 ]
 
+valid_reward_ids = ["rw123",
+"rw456",
+"rw789",
+"rw012",
+"rw345",
+"rw567"]
+
+def generate_gift_code(reward_id: str, user_id: str) -> str:
+        # random recipe
+        return reward_id + user_id + str(int(time.time()))
+
 # Generate dummy rewards
 dummy_rewards = [
     {
         "rewardId": str(uuid.uuid4()),
         "userId": user_id,
         "expiry": generate_expiry(random.randint(20, 60)),  # Expiry 20-60 days from now
-        "giftcode": f"GC{random.randint(1000, 9999)}" if random.choice([True, False]) else None
+        "giftcode": generate_gift_code(random.choice(valid_reward_ids), user_id) if random.choice([True, False]) else None
     }
     for user_id in predefined_user_ids
 ]

@@ -159,12 +159,12 @@ def create_reward(reward: Reward) -> None:
 
 # Dummy reward data
 dummy_rewards = [
-    Reward(description="Grab-10", pointsRequired=100, availability=50),
-    Reward(description="Starbucks-5", pointsRequired=250, availability=30),
-    Reward(description="FoodPanda-15", pointsRequired=300, availability=40),
-    Reward(description="FairPrice-20", pointsRequired=500, availability=20),
-    Reward(description="Grab-20", pointsRequired=1000, availability=100),
-    Reward(description="Luckin-5", pointsRequired=600, availability=10),
+    Reward(rewardID="rw123",description="Grab-10", pointsRequired=100, validity=30, availability=50),
+    Reward(rewardID="rw456",description="Starbucks-5", pointsRequired=250, availability=30),
+    Reward(rewardID="rw789",description="FoodPanda-15", pointsRequired=300, availability=40),
+    Reward(rewardID="rw012",description="FairPrice-20", pointsRequired=500, availability=20),
+    Reward(rewardID="rw345",description="Grab-20", pointsRequired=1000, availability=100),
+    Reward(rewardID="rw567",description="Luckin-5", pointsRequired=600, availability=10),
 ]
 
 # Insert each dummy reward into the database
