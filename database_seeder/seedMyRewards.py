@@ -34,7 +34,7 @@ def generate_gift_code(reward_id: str, user_id: str) -> str:
 # Generate dummy rewards
 dummy_rewards = [
     {
-        "rewardId": str(uuid.uuid4()),
+        "rewardId": random.choice(valid_reward_ids),
         "userId": user_id,
         "expiry": generate_expiry(random.randint(20, 60)),  # Expiry 20-60 days from now
         "giftcode": generate_gift_code(random.choice(valid_reward_ids), user_id) if random.choice([True, False]) else None
