@@ -132,6 +132,7 @@ class RewardService:
         cursor = conn_myrewards.cursor()
         cursor.execute(insert_query, (reward.rewardID, user_id, reward.validity, self.generate_gift_code(reward.rewardID, user_id)))
         conn_myrewards.commit()
+    
 
         # close the connections
         conn_user.close()

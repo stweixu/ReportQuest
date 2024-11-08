@@ -149,16 +149,16 @@ class UserService:
     def update_user(self, user_id: uuid.UUID, user: UserUpdate) -> int:
         """Update a user in the User table."""
         # check if username is already taken
-        query = "SELECT * FROM User WHERE userName = ?"
+        query = "SELECT * FROM User WHERE userName = ? AND userID <> ?"
         cursor = self.conn.cursor()
-        cursor.execute(query, (user.userName,))
+        cursor.execute(query, (user.userName, user_id))
         result = cursor.fetchone()
         if result:
             return (422, None)  # Bad Request user already exists
         # check if email is already taken
-        query = "SELECT * FROM User WHERE emailAddress = ?"
+        query = "SELECT * FROM User WHERE emailAddress = ? AND userID <> ?"
         cursor = self.conn.cursor()
-        cursor.execute(query, (user.emailAddress,))
+        cursor.execute(query, (user.emailAddress, user_id))
         result = cursor.fetchone()
         if result:
             return (422, None)  # Bad Request email already exists
