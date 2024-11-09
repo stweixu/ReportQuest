@@ -4,8 +4,11 @@ from typing import Optional
 
 class Report(BaseModel):
     user_id: str
+    relevance: int
     severity: int
-    status: str
+    urgency: int
+    status: str = "Pending"
+    #change the migration script please :)
     report_id: str
     description: Optional[str]
     image_path: Optional[str]

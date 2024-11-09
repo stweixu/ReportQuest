@@ -166,6 +166,8 @@ async def submit_report(
     report = Report(
         user_id=user_id,
         severity=0,
+        relevance=0,
+        urgency=0,
         status="Pending",
         report_id=report_id,
         description=description,

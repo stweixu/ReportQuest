@@ -8,15 +8,17 @@ def up():
     """Create the Report table if it doesn't exist."""
     create_table_query = """
     CREATE TABLE IF NOT EXISTS Report (
-        UserID TEXT NOT NULL,  -- Store UUID as text
+        UserID TEXT NOT NULL,
+        Relevance INTEGER NOT NULL,
         Severity INTEGER NOT NULL,
-        Status TEXT CHECK(Status IN ('Pending', 'In Progress', 'Resolved')),  -- Assuming status values are predefined
-        ReportID TEXT PRIMARY KEY,  -- Store UUID as text
+        Urgency INTEGER NOT NULL,
+        Status TEXT CHECK(Status IN ('Pending', 'In Progress', 'Resolved')) DEFAULT 'Pending',
+        ReportID TEXT PRIMARY KEY,
         Description TEXT,
         imagePath TEXT,
         title TEXT,
-        Datetime INTEGER NOT NULL,  -- Unix timestamp
-        Location TEXT NOT NULL  -- Store location as text
+        Datetime INTEGER NOT NULL,
+        Location TEXT NOT NULL
     );
     """
     try:

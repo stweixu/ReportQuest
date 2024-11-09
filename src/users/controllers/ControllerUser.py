@@ -1,5 +1,5 @@
 import os
-from fastapi import APIRouter, HTTPException, status, Response
+from fastapi import APIRouter, File, HTTPException, status, Response
 from fastapi.responses import FileResponse, JSONResponse
 from typing import Optional
 import sqlite3
@@ -139,3 +139,21 @@ async def get_profile_picture(user_id: uuid.UUID):
 
     # Return the image file
     return FileResponse(image_path, media_type="image/png")
+
+@router.post("/profilePicture/{user_id}")
+async def update_profile_picture(user_id: uuid.UUID, file: bytes = File(...)):
+    """Update the profile picture of a user."""
+    # check if user exists
+    if not user_service.check_user_exists(str(user_id)):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    # Define the path to the images directory
+    image_dir = "profilepics"
+    # Construct the image file path (assuming .png extension)
+    image_path = f"{image_dir}/{user_id}.png"
+    # update the image
+    with open(image_path, "wb") as f:
+        f.write(file)
+    # return success
+    return {"detail": "Profile picture updated successfully."}

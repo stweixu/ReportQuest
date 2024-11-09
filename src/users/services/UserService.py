@@ -106,7 +106,7 @@ class UserService:
     def check_user_exists(self, user_id: str) -> bool:
         # look up the points db and table
         # return True if the user exists, False otherwise
-        query = "SELECT UserID FROM User WHERE UserID = ?;"
+        query = "SELECT userID FROM User WHERE userID = ?;"
         cursor = self.conn.cursor()
         cursor.execute(query, (user_id,))
         result = cursor.fetchone()

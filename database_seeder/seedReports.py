@@ -9,7 +9,9 @@ import random
 
 class Report(BaseModel):
     user_id: str
+    relevance: int
     severity: int
+    urgency: int
     status: str
     report_id: str
     description: Optional[str]
@@ -26,8 +28,8 @@ conn = sqlite3.connect("database/reports.db")
 def create_report(report: Report) -> Tuple[int, Optional[Report]]:
     """Insert a new report into the Report table."""
     insert_query = """
-        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title, Datetime, Location)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
     try:
         cursor = conn.cursor()
@@ -35,12 +37,14 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
             insert_query,
             (
                 report.user_id,
+                report.relevance,
                 report.severity,
+                report.urgency,
                 report.status,
                 report.report_id,
                 report.description,
                 report.image_path,
-                report.title,  # No longer including UEN and assigned_authority_uen
+                report.title,
                 report.datetime,
                 report.location,
             ),
@@ -75,14 +79,16 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
     for i in range(num_reports):
         report = Report(
             user_id=str(predefined_uuids[i % len(predefined_uuids)]),
+            relevance=fake.random_int(min=1, max=10),
             severity=fake.random_int(min=1, max=10),
+            urgency=fake.random_int(min=1, max=10),
             status=random.choice(status_options),
             report_id=str(uuid.uuid4()),
             description=fake.sentence(nb_words=10),
             image_path=fake.file_path(extension="jpg"),
             title=fake.catch_phrase(),
-            datetime=int(time.time()),  # Add a datetime field if required
-            location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Add a location field if required
+            datetime=int(time.time()),  # Unix timestamp
+            location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Location as a string
         )
         reports.append(report)
 
@@ -94,9 +100,7 @@ fake_reports = generate_fake_reports(10)
 
 for report in fake_reports:
     status_code, _ = create_report(report)
-    if status_code == 201:
-        print(f"Successfully inserted report: {report.report_id}")
-    else:
+    if status_code != 201:
         print(f"Failed to insert report: {report.report_id}")
 
 # Close the database connection

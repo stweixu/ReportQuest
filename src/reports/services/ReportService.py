@@ -16,8 +16,10 @@ class ReportService:
         create_table_query = """
         CREATE TABLE IF NOT EXISTS Report (
             UserID TEXT NOT NULL,
+            Relevance INTEGER NOT NULL,
             Severity INTEGER NOT NULL,
-            Status TEXT CHECK(Status IN ('Pending', 'In Progress', 'Resolved')),
+            Urgency INTEGER NOT NULL,
+            Status TEXT CHECK(Status IN ('Pending', 'In Progress', 'Resolved')) DEFAULT 'Pending',
             ReportID TEXT PRIMARY KEY,
             Description TEXT,
             imagePath TEXT,
@@ -37,8 +39,8 @@ class ReportService:
     def create_report(self, report: Report) -> Tuple[int, Optional[Report]]:
         """Insert a new report into the Report table."""
         insert_query = """
-        INSERT INTO Report (UserID, Severity, Status, ReportID, Description, imagePath, title, Datetime, Location)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = self.conn.cursor()
@@ -46,7 +48,9 @@ class ReportService:
                 insert_query,
                 (
                     report.user_id,
+                    report.relevance,
                     report.severity,
+                    report.urgency,
                     report.status,
                     report.report_id,
                     report.description,
@@ -134,14 +138,16 @@ class ReportService:
         """Helper method to parse a database row into a Report dictionary."""
         return {
             "user_id": result[0],
-            "severity": result[1],
-            "status": result[2],
-            "report_id": result[3],
-            "description": result[4],
-            "image_path": result[5],
-            "title": result[6],
-            "datetime": result[7],
-            "location": result[8],
+            "relevance": result[1],
+            "severity": result[2],
+            "urgency": result[3],
+            "status": result[4],
+            "report_id": result[5],
+            "description": result[6],
+            "image_path": result[7],
+            "title": result[8],
+            "datetime": result[9],
+            "location": result[10],
         }
 
     def close_connection(self):
