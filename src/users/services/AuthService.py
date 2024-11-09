@@ -138,6 +138,8 @@ import sqlite3
 import yagmail
 import os
 from config import EMAIL_USER, EMAIL_PASSWORD, FRONTEND_URL
+
+
 # ============== Service class for Auth model ===============
 class AuthService:
     def __init__(self, conn: sqlite3.Connection):
@@ -166,7 +168,9 @@ class AuthService:
 
         # Hash the password and create an unverified user entry
         hashed_password = self.ph.hash(password)
-        unverified_user = UnverifiedUser.create_unverified(username.lower(), hashed_password, email)
+        unverified_user = UnverifiedUser.create_unverified(
+            username.lower(), hashed_password, email
+        )
 
         print("poop2")
         insert_query = """
@@ -192,7 +196,9 @@ class AuthService:
                 ),
             )
             self.conn.commit()
-            self.send_verification_email(email, unverified_user.userName, unverified_user.verificationKey)
+            self.send_verification_email(
+                email, unverified_user.userName, unverified_user.verificationKey
+            )
             return 200, {"message": "Verification email sent!"}
         except sqlite3.IntegrityError:
             return 400, None  # Duplicate entry
@@ -200,11 +206,13 @@ class AuthService:
             print(e)
             return 500, None  # Internal server error
 
-    def send_verification_email(self, email: str, username: str, verification_key: str) -> None:
+    def send_verification_email(
+        self, email: str, username: str, verification_key: str
+    ) -> None:
         """Send verification email with a unique verification link."""
         subject = "Please Confirm Your Email to Complete Registration"
         verification_link = f"{FRONTEND_URL}/login?verification_key={verification_key}"
-        
+
         # Use an HTML email template for a more professional look
         body = f"""
         <html>
@@ -233,32 +241,32 @@ class AuthService:
         </body>
         </html>
         """
-        
+
         self.yag.send(to=email, subject=subject, contents=body)
 
     def reset_password(self, verification_key: str, new_password: str):
         """Reset a user's password using the provided verification key."""
         cursor = self.conn.cursor()
-        
+
         # Check the ResetPassword table for a valid verification key
         query = "SELECT userID FROM ResetPassword WHERE verificationKey = ?"
         cursor.execute(query, (verification_key,))
         result = cursor.fetchone()
-        
+
         if not result:
             return 404, {"message": "Invalid or expired verification key."}
-        
+
         user_id = result[0]
         hashed_password = self.ph.hash(new_password)
-        
+
         # Update the password in the User table
         update_query = "UPDATE User SET passwordHash = ? WHERE userID = ?"
         cursor.execute(update_query, (hashed_password, user_id))
-        
+
         # Delete the used verification key from ResetPassword table
         delete_query = "DELETE FROM ResetPassword WHERE verificationKey = ?"
         cursor.execute(delete_query, (verification_key,))
-        
+
         self.conn.commit()
         return 200, {"message": "Password reset successfully."}
 
@@ -269,21 +277,25 @@ class AuthService:
         query = "SELECT userID FROM User WHERE emailAddress = ?"
         cursor.execute(query, (email,))
         result = cursor.fetchone()
-        
+
         if not result:
             return 404, {"message": "Email not found."}
-        
+
         user_id = result[0]
         verification_key = str(uuid.uuid4())
-        
+
         # Insert the verification key into the ResetPassword table
-        insert_query = "INSERT INTO ResetPassword (userID, verificationKey) VALUES (?, ?)"
+        insert_query = (
+            "INSERT INTO ResetPassword (userID, verificationKey) VALUES (?, ?)"
+        )
         cursor.execute(insert_query, (user_id, verification_key))
         self.conn.commit()
-        
+
         # Prepare and send the password reset email
         subject = "Password Reset Request"
-        reset_link = f"{FRONTEND_URL}/reset-password?verification_key={verification_key}"
+        reset_link = (
+            f"{FRONTEND_URL}/reset-password?verification_key={verification_key}"
+        )
         body = f"""
         <html>
         <body>
@@ -309,7 +321,6 @@ class AuthService:
         """
         self.yag.send(to=email, subject=subject, contents=body)
         return 200, {"message": "Password reset email sent successfully."}
-
 
     def verify_user(self, verification_key: str):
         """Verify an unverified user and move them to the main User table."""
@@ -361,7 +372,10 @@ class AuthService:
                     verified_user.isModerator,
                 ),
             )
-            cursor.execute("DELETE FROM UnverifiedUser WHERE verificationKey = ?", (verification_key,))
+            cursor.execute(
+                "DELETE FROM UnverifiedUser WHERE verificationKey = ?",
+                (verification_key,),
+            )
             self.conn.commit()
             return 200, {"message": "User verified successfully."}
         except sqlite3.Error as e:
@@ -387,12 +401,19 @@ class AuthService:
                         "user_id": user_id,
                         "isAuthority": isAuthority,
                         "isModerator": isModerator,
-                        "expiration": int((datetime.now() + timedelta(hours=24)).timestamp()),
+                        "expiration": int(
+                            (datetime.now() + timedelta(hours=24)).timestamp()
+                        ),
                     },
                     JWT_SECRET,
                     algorithm="HS256",
                 )
-                return 200, {"token": token, "user_id": user_id, "isAuthority": isAuthority, "isModerator": isModerator}
+                return 200, {
+                    "token": token,
+                    "user_id": user_id,
+                    "isAuthority": isAuthority,
+                    "isModerator": isModerator,
+                }
             else:
                 return 401, None  # Unauthorized
         else:

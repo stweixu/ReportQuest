@@ -6,8 +6,9 @@ from src.rewards.models.MyRewards import MyRewards
 from src.rewards.models.RewardModel import Reward, RewardUpdate
 import uuid
 
+
 class RewardService:
-    def __init__(self, conn : sqlite3.Connection):
+    def __init__(self, conn: sqlite3.Connection):
         self.conn = conn
 
     def create_reward_table(self):
@@ -38,7 +39,7 @@ class RewardService:
                     reward.description,
                     reward.pointsRequired,
                     reward.validity,
-                    reward.availability
+                    reward.availability,
                 ),
             )
             self.conn.commit()
@@ -66,51 +67,64 @@ class RewardService:
             for result in results
         ]
         return 200, rewards
-    
+
     def update_reward(self, reward_id: str, reward: RewardUpdate) -> int:
         query = "UPDATE Reward SET description = ?, pointsRequired = ?, validity = ?, availability = ? WHERE rewardId = ?;"
         try:
             cursor = self.conn.cursor()
-            cursor.execute(query, (reward.description, reward.pointsRequired, reward.validity, reward.availability, reward_id))
+            cursor.execute(
+                query,
+                (
+                    reward.description,
+                    reward.pointsRequired,
+                    reward.validity,
+                    reward.availability,
+                    reward_id,
+                ),
+            )
             self.conn.commit()
             print(self.read_all_rewards())
-            print('done')
+            print("done")
             return 200
         except sqlite3.Error as e:
             print(e)
             return 400
-    
+
     def get_user_rewards(self, user_id: str) -> List[MyRewards]:
         conn = sqlite3.connect("database/myRewards.db")
-        query = "SELECT rewardId, userId, expiry, giftcode FROM MyRewards WHERE userId = ?;"
+        query = (
+            "SELECT rewardId, userId, expiry, giftcode FROM MyRewards WHERE userId = ?;"
+        )
         rewards = []
-        
+
         try:
             cursor = conn.cursor()
             cursor.execute(query, (user_id,))
             rows = cursor.fetchall()
-            
+
             for row in rows:
                 reward = MyRewards(
                     reward_id=row[0],
                     user_id=row[1],
                     expiry=row[2],  # Convert Unix timestamp to datetime
-                    giftcode=row[3]
+                    giftcode=row[3],
                 )
                 rewards.append(reward)
-                
+
         except sqlite3.Error as e:
             print(f"Error retrieving rewards: {e}")
         finally:
             conn.close()
         return 200, rewards
 
-    def claim_reward_by_id(self, reward_id: str, user_id: str) -> Tuple[int, Optional[Reward]]:
+    def claim_reward_by_id(
+        self, reward_id: str, user_id: str
+    ) -> Tuple[int, Optional[Reward]]:
         # lookup the reward
         res = self.read_reward_by_id(reward_id)
-        if res[1] == None: #not found
+        if res[1] == None:  # not found
             return 404, None
-        reward :Reward = res[1]
+        reward: Reward = res[1]
         # look up the cost
         cost = reward.pointsRequired
         # lookup points in user DB
@@ -131,20 +145,27 @@ class RewardService:
 
         insert_query = "INSERT INTO MyRewards (RewardID, UserID, Expiry, Giftcode) VALUES (?, ?, ?, ?);"
         cursor = conn_myrewards.cursor()
-        cursor.execute(insert_query, (reward.rewardID, user_id, reward.validity, self.generate_gift_code(reward.rewardID, user_id)))
+        cursor.execute(
+            insert_query,
+            (
+                reward.rewardID,
+                user_id,
+                reward.validity,
+                self.generate_gift_code(reward.rewardID, user_id),
+            ),
+        )
         conn_myrewards.commit()
-    
 
         # close the connections
         conn_user.close()
         conn_myrewards.close()
         return 200, reward
-        
+
     def generate_gift_code(self, reward_id: str, user_id: str) -> str:
         # random recipe
         return reward_id + user_id + str(int(time.time()))
 
-    def is_valid_uuid(self,val):
+    def is_valid_uuid(self, val):
         try:
             uuid.UUID(str(val))
             return True
@@ -167,7 +188,7 @@ class RewardService:
             return 200, reward
         else:
             return 404, None  # Not Found
-        
+
     def read_reward_by_name(self, name: str) -> Tuple[int, Optional[Reward]]:
         select_query = "SELECT * FROM Reward WHERE Description = ?;"
         cursor = self.conn.cursor()

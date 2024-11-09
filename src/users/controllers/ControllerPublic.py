@@ -53,18 +53,26 @@ async def login_user(user: UserLogin):
     status_code, res = auth_service.login(user.username, user.password)
     if status_code == 200:
         # Set the cookie in the response
-        response = JSONResponse(content={"token": res['token'], "user_id": res['user_id'], "isAuthority": res['isAuthority'], "isModerator": res['isModerator']}, status_code=status_code)
+        response = JSONResponse(
+            content={
+                "token": res["token"],
+                "user_id": res["user_id"],
+                "isAuthority": res["isAuthority"],
+                "isModerator": res["isModerator"],
+            },
+            status_code=status_code,
+        )
         response.set_cookie(
             key="access_token",
-            value=res['token'],
+            value=res["token"],
             httponly=True,  # This makes the cookie inaccessible to JavaScript (increases security)
             max_age=86400,  # Set the cookie to expire after 1 day (86400 seconds)
             samesite="Lax",  # Adjust according to your requirements (Lax, Strict, None)
         )
         response.set_cookie(
             key="user_id",
-            value=res['user_id'],
-            httponly=False, # make accessible to JavaScript
+            value=res["user_id"],
+            httponly=False,  # make accessible to JavaScript
             max_age=86400,  # Set the cookie to expire after 1 day (86400 seconds)
             samesite="Lax",  # Adjust according to your requirements (Lax, Strict, None)
         )
@@ -84,7 +92,8 @@ async def login_user(user: UserLogin):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to login user.",
         )
-    
+
+
 @router.get("/verify/{verification_key}")
 async def verify_user(verification_key: str):
     """Verify a user with the provided verification key."""
@@ -102,13 +111,17 @@ async def verify_user(verification_key: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to verify user.",
         )
-    
+
+
 @router.post("/password-reset-request/")
 async def request_password_reset(data: PasswordResetRequest):
     """Request a password reset email."""
     status_code, response = auth_service.send_password_reset_email(data.email)
     if status_code == 200:
-        return JSONResponse(content={"message": "Password reset email sent successfully."}, status_code=status_code)
+        return JSONResponse(
+            content={"message": "Password reset email sent successfully."},
+            status_code=status_code,
+        )
     elif status_code == 404:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -124,9 +137,13 @@ async def request_password_reset(data: PasswordResetRequest):
 @router.post("/password-reset/")
 async def reset_password(data: PasswordReset):
     """Reset a user's password using a verification key."""
-    status_code, response = auth_service.reset_password(data.verification_key, data.new_password)
+    status_code, response = auth_service.reset_password(
+        data.verification_key, data.new_password
+    )
     if status_code == 200:
-        return JSONResponse(content={"message": "Password reset successfully."}, status_code=status_code)
+        return JSONResponse(
+            content={"message": "Password reset successfully."}, status_code=status_code
+        )
     elif status_code == 404:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -23,6 +23,7 @@ class UserRegister(BaseModel):
     password: str
     emailAddress: str
 
+
 class UserUpdate(BaseModel):
     userName: str
     emailAddress: str

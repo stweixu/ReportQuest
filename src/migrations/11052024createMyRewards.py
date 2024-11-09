@@ -6,7 +6,6 @@ from migration_utils import run_migration
 def up():
     conn: sqlite3.Connection = sqlite3.connect("database/myRewards.db")
     """Create the Report and MyRewards tables if they don't exist."""
-    
 
     # Create MyRewards table
     create_myrewards_table_query = """
@@ -17,7 +16,7 @@ def up():
         giftcode TEXT  -- Store gift code as text
     );
     """
-    
+
     try:
         cursor = conn.cursor()
         cursor.execute(create_myrewards_table_query)
@@ -32,9 +31,9 @@ def up():
 def down():
     conn: sqlite3.Connection = sqlite3.connect("database/myRewards.db")
     """Delete the Report and MyRewards tables if they exist."""
-    
+
     drop_myrewards_table_query = "DROP TABLE IF EXISTS MyRewards;"
-    
+
     try:
         cursor = conn.cursor()
         cursor.execute(drop_myrewards_table_query)

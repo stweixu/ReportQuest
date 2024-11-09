@@ -12,7 +12,7 @@ from src.users.models.UserModels import (
     User,
     UserLogin,
     StatusResponse,
-    UserUpdate
+    UserUpdate,
 )
 from src.users.services.UserService import UserService
 
@@ -80,6 +80,7 @@ async def update_user_points(user_id: uuid.UUID, points: int):
         )
     return {"detail": "User points updated successfully."}
 
+
 @router.put("/{user_id}/update", response_model=dict)
 async def update_user(user_id: uuid.UUID, user: UserUpdate):
     """Update a user."""
@@ -92,7 +93,7 @@ async def update_user(user_id: uuid.UUID, user: UserUpdate):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update user.",
-        )    
+        )
     return {"detail": "User updated successfully."}
 
 
@@ -123,6 +124,7 @@ async def wipe_users():
         )
     return {"detail": "All users wiped successfully."}
 
+
 @router.get("/profilePicture/{user_id}", response_class=Response)
 async def get_profile_picture(user_id: uuid.UUID):
     """Retrieve the profile picture of a user."""
@@ -130,10 +132,10 @@ async def get_profile_picture(user_id: uuid.UUID):
     image_dir = "profilepics"
     # Construct the image file path (assuming .png extension)
     image_path = f"{image_dir}/{user_id}.png"
-    
+
     # Check if the image exists
     if not os.path.isfile(image_path):
         return FileResponse(f"{image_dir}/default.png", media_type="image/png")
-    
+
     # Return the image file
     return FileResponse(image_path, media_type="image/png")

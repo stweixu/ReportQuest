@@ -4,19 +4,19 @@ import asyncio
 import numpy as np
 import pandas as pd
 
+
 class OllamaChat:
     def __init__(self, model_name: str):
         # Initialize with a model name for text or image analysis
         self.model_name = model_name
         self.auth_df = pd.read_csv("database/authorities.csv")
         self.authorities_list = [
-                                "Police Station",
-                                "Fire Station",
-                                "Community Center",
-                                "Hospital",
-                                "Emergency Services"
-                            ]
-
+            "Police Station",
+            "Fire Station",
+            "Community Center",
+            "Hospital",
+            "Emergency Services",
+        ]
 
     async def ask(self, prompt: str) -> str:
         # Generate a text response using ollama asynchronously
@@ -105,14 +105,18 @@ class OllamaChat:
 
         print(title, image_analysis, ratings_int)
         return {"ratings": ratings_int, "title": title}
-    
-    async def find_nearest_authority(self, input_lat: float, input_lon: float, authority_type: str) -> dict:
+
+    async def find_nearest_authority(
+        self, input_lat: float, input_lon: float, authority_type: str
+    ) -> dict:
         # Filter the DataFrame by authority type
-        filtered_df = self.auth_df[self.auth_df['Type'] == authority_type]
+        filtered_df = self.auth_df[self.auth_df["Type"] == authority_type]
         # Calculate distances using the Haversine formula
-        distances : pd.DataFrame = filtered_df.apply(
-            lambda row: self.haversine(input_lat, input_lon, row['Latitude'], row['Longitude']),
-            axis=1
+        distances: pd.DataFrame = filtered_df.apply(
+            lambda row: self.haversine(
+                input_lat, input_lon, row["Latitude"], row["Longitude"]
+            ),
+            axis=1,
         )
         # Get the index of the nearest authority
         nearest_index = distances.idxmin()
@@ -122,14 +126,17 @@ class OllamaChat:
             "Authority Name": nearest_authority["Authority Name"],
             "Latitude": nearest_authority["Latitude"],
             "Longitude": nearest_authority["Longitude"],
-            "Distance (km)": distances[nearest_index]
+            "Distance (km)": distances[nearest_index],
         }
 
-    def haversine(self,lat1, lon1, lat2, lon2):
+    def haversine(self, lat1, lon1, lat2, lon2):
         R = 6371.0  # Earth radius in kilometers
         phi1, phi2 = np.radians(lat1), np.radians(lat2)
         delta_phi, delta_lambda = np.radians(lat2 - lat1), np.radians(lon2 - lon1)
-        a = np.sin(delta_phi / 2)**2 + np.cos(phi1) * np.cos(phi2) * np.sin(delta_lambda / 2)**2
+        a = (
+            np.sin(delta_phi / 2) ** 2
+            + np.cos(phi1) * np.cos(phi2) * np.sin(delta_lambda / 2) ** 2
+        )
         c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
         return R * c
 
@@ -142,19 +149,17 @@ class OllamaChat:
             f"Available authority types: {', '.join(self.authorities_list)}\n\n"
             f"Please respond with the most relevant authority type as written."
         )
-        
+
         # Use the ask method to get the response from Ollama
         response = await self.ask(prompt)
-        
+
         # Strip any extra whitespace and check if response matches a valid entry in authorities_list
         relevant_authority = response.strip()
-        
+
         if relevant_authority in self.authorities_list:
             return relevant_authority
         else:
             return "Unknown"
-
-
 
 
 # async def main():

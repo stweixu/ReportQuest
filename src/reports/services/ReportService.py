@@ -1,6 +1,8 @@
 import sqlite3
 from typing import List, Tuple, Optional
-from src.reports.models.ReportModels import Report  # Assuming the Report model is stored here
+from src.reports.models.ReportModels import (
+    Report,
+)  # Assuming the Report model is stored here
 from src.users.services.UserService import UserService
 
 
@@ -158,4 +160,6 @@ class ReportService:
 
     def check_user_exists(self, user_id: str) -> bool:
         """Check if a user exists in the database using UserService."""
-        return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)
+        return UserService(sqlite3.connect("database/users.db")).check_user_exists(
+            user_id
+        )

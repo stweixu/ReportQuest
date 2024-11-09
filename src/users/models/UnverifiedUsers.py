@@ -4,6 +4,7 @@ import uuid
 
 from src.users.models.UserModels import UserCreate
 
+
 class UnverifiedUser(BaseModel):
     userID: uuid.UUID
     userName: str
@@ -18,7 +19,9 @@ class UnverifiedUser(BaseModel):
     verificationKey: str
 
     @classmethod
-    def create_unverified(cls, userName: str, passwordHash: str, emailAddress: str) -> "UnverifiedUser":
+    def create_unverified(
+        cls, userName: str, passwordHash: str, emailAddress: str
+    ) -> "UnverifiedUser":
         """Factory method to create a new UnverifiedUser with a unique verification key."""
         return cls(
             userID=uuid.uuid4(),
@@ -31,7 +34,7 @@ class UnverifiedUser(BaseModel):
             notificationEnabled=True,
             isAuthority=False,
             isModerator=False,
-            verificationKey=str(uuid.uuid4())  # unique verification key
+            verificationKey=str(uuid.uuid4()),  # unique verification key
         )
 
     def to_verified_user(self) -> "UserCreate":

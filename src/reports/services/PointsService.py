@@ -6,12 +6,13 @@ from src.reports.services.OllamaAsync import OllamaChat
 from src.reports.services.ReportService import ReportService
 import asyncio
 
+
 class PointsService:
     def __init__(self, conn: sqlite3.Connection, db_file: str = "database/users.db"):
         # Initialize the connection to the database
         self.conn = conn
         self.ollama = OllamaChat("llama3.2")
-    
+
     def create_user(self, user_id: str) -> None:
         """Create the user in the User table with initial points set to 0 if it doesn't exist."""
         query = """
@@ -20,7 +21,10 @@ class PointsService:
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         cursor = self.conn.cursor()
-        cursor.execute(query, (user_id, "defaultUser", "", "", False, 0, "email", False, False, False))
+        cursor.execute(
+            query,
+            (user_id, "defaultUser", "", "", False, 0, "email", False, False, False),
+        )
         self.conn.commit()
 
     def check_user_exists(self, user_id: str) -> bool:
@@ -46,7 +50,9 @@ class PointsService:
         else:
             return 0
 
-    def update_point_for_user_id(self, user_id: str, points: int, report_id: str) -> int:
+    def update_point_for_user_id(
+        self, user_id: str, points: int, report_id: str
+    ) -> int:
         """Update points for a user in the User table and update the last update time."""
         # Ensure user exists before updating points
         if not self.check_user_exists(user_id):
@@ -69,9 +75,13 @@ class PointsService:
         """Calculate points based on rating factors."""
         return 2 * ratings[0] + 5 * ratings[1] + 3 * ratings[2]
 
-    async def evaluate_points(self, user_id: str, image_path: str, text_description: str) -> int:
+    async def evaluate_points(
+        self, user_id: str, image_path: str, text_description: str
+    ) -> int:
         """Evaluate points based on image and description analysis."""
-        result = await self.ollama.analyse_image_and_text(image_path, "What is this image?", text_description)
+        result = await self.ollama.analyse_image_and_text(
+            image_path, "What is this image?", text_description
+        )
         print(result["title"])
         if result["ratings"][0] < 5:
             return 0
@@ -82,7 +92,7 @@ class PointsService:
         """Evaluate points and add them to the user based on report details."""
         print(f"Evaluating points for user_id: {report.user_id}")
         points = self.get_point_from_user_id(report.user_id)
-        
+
         # Create a ReportService instance and create the report
         report_service = ReportService(sqlite3.connect("database/reports.db"))
         status_code, report = report_service.create_report(report)
@@ -92,7 +102,9 @@ class PointsService:
         print(f"Report created with report ID {report.report_id}")
 
         # Evaluate new points
-        new_points = await self.evaluate_points(report.user_id, report.image_path, report.description)
+        new_points = await self.evaluate_points(
+            report.user_id, report.image_path, report.description
+        )
         if new_points:
             points += new_points
             self.update_point_for_user_id(report.user_id, points, report.report_id)
@@ -101,7 +113,9 @@ class PointsService:
         result = await self.ollama.get_relevant_authority_ollama(report.description)
         print(f"Relevant authority: {result}")
         lat, long = report.location.split(",")
-        nearest = await self.ollama.find_nearest_authority(float(lat), float(long), result)
+        nearest = await self.ollama.find_nearest_authority(
+            float(lat), float(long), result
+        )
         print(nearest)
         return
 

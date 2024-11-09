@@ -6,6 +6,7 @@ import uuid
 from faker import Faker
 import random
 
+
 class Report(BaseModel):
     user_id: str
     severity: int
@@ -17,8 +18,10 @@ class Report(BaseModel):
     datetime: int
     location: str  # Ensure this is included if required
 
+
 # Database connection
 conn = sqlite3.connect("database/reports.db")
+
 
 def create_report(report: Report) -> Tuple[int, Optional[Report]]:
     """Insert a new report into the Report table."""
@@ -39,7 +42,7 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
                 report.image_path,
                 report.title,  # No longer including UEN and assigned_authority_uen
                 report.datetime,
-                report.location
+                report.location,
             ),
         )
         conn.commit()
@@ -51,6 +54,7 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
         print(f"Error inserting report: {e}")
         return 500, None  # Internal server error
 
+
 fake: Faker = Faker()
 
 predefined_uuids = [
@@ -61,6 +65,7 @@ predefined_uuids = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174004"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174005"),
 ]
+
 
 def generate_fake_reports(num_reports: int) -> List[Report]:
     """Generate a list of fake Report entries."""
@@ -77,11 +82,12 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             image_path=fake.file_path(extension="jpg"),
             title=fake.catch_phrase(),
             datetime=int(time.time()),  # Add a datetime field if required
-            location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}"  # Add a location field if required
+            location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Add a location field if required
         )
         reports.append(report)
 
     return reports
+
 
 # Generate 10 fake report entries
 fake_reports = generate_fake_reports(10)

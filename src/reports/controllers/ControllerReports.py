@@ -171,14 +171,12 @@ async def submit_report(
         description=description,
         image_path=image_path,
         title="",
-        datetime= incident_time or int(time.time()),
+        datetime=incident_time or int(time.time()),
         location=f"{latitude},{longitude}",
     )
     # evalutae report with pointsservice, start the process and return true, do not await
     # asyncio.create_task(points_service.evaluate_and_add_points(user_id, image_path, description))
-    asyncio.create_task(
-        points_service.evaluate_and_add_points(report)
-    )
+    asyncio.create_task(points_service.evaluate_and_add_points(report))
     return {"message": "Report received successfully"}
 
 
@@ -206,10 +204,10 @@ async def get_report_picture(report_id: uuid.UUID):
     # Construct the image file path (assuming .png extension)
     image_path = f"{image_dir}/{report_id}.png"
     default_path = f"{image_dir}/default.png"
-    
+
     # Check if the image exists
     if not os.path.isfile(image_path):
         return FileResponse(default_path, media_type="image/png")
-    
+
     # Return the image file as a response
     return FileResponse(image_path, media_type="image/png")
