@@ -96,14 +96,13 @@ class OllamaChat:
 
         # Await the asynchronous ask for title generation
         title = await self.ask(
-            f"Generate a clear, factual title (under 10 words) for a fault report based on:\n"
-            f"description: {text_description}\n"
-            f"analysis: {image_analysis}\n"
-            f"Only respond with the title, without any additional explanation. "
-            f"Make it straightforward and specific, without figurative language. Do not hallucinate or provide factually incorrect information."
+            f"Generate a concise, factual title (under 10 words) for this fault report:\n"
+            f"Description: {text_description}\n"
+            f"Image analysis: {image_analysis}\n"
+            f"Respond with a straightforward and specific title only, like 'Man dies on street' or 'Cat stuck on tree.' Avoid figurative language, assumptions, or additional details."
         )
 
-        print(title, image_analysis, ratings_int)
+
         return {"ratings": ratings_int, "title": title}
 
     async def find_nearest_authority(

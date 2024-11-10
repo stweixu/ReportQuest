@@ -39,8 +39,8 @@ class ReportService:
     def create_report(self, report: Report) -> Tuple[int, Optional[Report]]:
         """Insert a new report into the Report table."""
         insert_query = """
-        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location, Points)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = self.conn.cursor()
@@ -58,6 +58,7 @@ class ReportService:
                     report.title,
                     report.datetime,
                     report.location,
+                    report.points,
                 ),
             )
             self.conn.commit()

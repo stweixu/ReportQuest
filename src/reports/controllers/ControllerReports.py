@@ -172,7 +172,7 @@ async def submit_report(
         report_id=report_id,
         description=description,
         image_path=image_path,
-        title="",
+        title=title if title else "",
         datetime=incident_time or int(time.time()),
         location=f"{latitude},{longitude}",
     )

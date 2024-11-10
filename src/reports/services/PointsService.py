@@ -71,12 +71,12 @@ class PointsService:
             return 404  # Not Found
         return 200  # OK
     
-    def update_ratings(self, report_id: str, ratings: tuple[int]) -> int:
+    def update_ratings(self, report_id: str, ratings: tuple[int], points:int) -> int:
         """Update the ratings for a report in the Report table."""
         conn = sqlite3.connect("database/reports.db")
-        update_query = "UPDATE Report SET relevance = ?, severity = ?, urgency = ? WHERE ReportID = ?;"
+        update_query = "UPDATE Report SET relevance = ?, severity = ?, urgency = ?, points = ? WHERE ReportID = ?;"
         cursor = conn.cursor()
-        cursor.execute(update_query, (ratings[0], ratings[1], ratings[2], report_id))
+        cursor.execute(update_query, (ratings[0], ratings[1], ratings[2], points, report_id))
         conn.commit()
         conn.close()
         if cursor.rowcount == 0:
@@ -100,13 +100,11 @@ class PointsService:
         # 0 = Relevance
         # 1 = Severity
         # 2 = Urgency
-        print(f"Relevance: {result['ratings'][0]}")
-        print(f"Severity: {result['ratings'][1]}")
-        print(f"Urgency: {result['ratings'][2]}")
+        print(result)
         if result["ratings"][0] < 5:
             return 0
         addable_points = await self.calculate_points(result["ratings"])
-        return addable_points, (result["ratings"][0], result["ratings"][1], result["ratings"][2])
+        return addable_points, (result["ratings"][0], result["ratings"][1], result["ratings"][2]), result["title"]
 
     async def evaluate_and_add_points(self, report: Report) -> None:
         """Evaluate points and add them to the user based on report details."""
@@ -122,13 +120,15 @@ class PointsService:
         print(f"Report created with report ID {report.report_id}")
 
         # Evaluate new points
-        new_points, ratings = await self.evaluate_points(
+        new_points, ratings, title = await self.evaluate_points(
             report.image_path, report.description
         )
         if new_points:
             points += new_points
             self.update_point_for_user_id(report.user_id, points, report.report_id)
-            self.update_ratings(report.report_id, ratings)
+            self.update_ratings(report.report_id, ratings, points)
+            self.update_title(report.report_id, title)
+            self.set_report_status_in_progress(report.report_id)
         # Identify the relevant authority
         result = await self.ollama.get_relevant_authority_ollama(report.description)
         print(f"Relevant authority: {result}")
@@ -138,6 +138,42 @@ class PointsService:
         )
         print(nearest)
         return
+    
+    def set_report_status_in_progress(self, report_id: str) -> int:
+        """Set the status of a report in the Report table to 'In Progress'."""
+        conn = sqlite3.connect("database/reports.db")
+        update_query = "UPDATE Report SET Status = 'In Progress' WHERE ReportID = ?;"
+        cursor = conn.cursor()
+        cursor.execute(update_query, (report_id,))
+        conn.commit()
+        conn.close()
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+    
+
+    def update_title(self, report_id: str, title: str) -> int:
+        """Update the title for a report in the Report table."""
+        conn = sqlite3.connect("database/reports.db")
+        # check if title is "" in the DB
+        query = "SELECT title FROM Report WHERE ReportID = ?;"
+        cursor = conn.cursor()
+        cursor.execute(query, (report_id,))
+        result = cursor.fetchone()
+        if not result:
+            return 404  # Not Found
+        
+        if result[0] != "":
+            return 200
+        # else, update the title
+        update_query = "UPDATE Report SET title = ? WHERE ReportID = ?;"
+        cursor = conn.cursor()
+        cursor.execute(update_query, (title, report_id))
+        conn.commit()
+        conn.close()
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
 
     async def wipe_clean(self) -> int:
         """Clear all data from the User table's points-related fields, retaining user info."""

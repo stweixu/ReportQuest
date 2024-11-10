@@ -18,7 +18,8 @@ def up():
         imagePath TEXT,
         title TEXT,
         Datetime INTEGER NOT NULL,
-        Location TEXT NOT NULL
+        Location TEXT NOT NULL,
+        Points INTEGER NOT NULL
     );
     """
     try:
