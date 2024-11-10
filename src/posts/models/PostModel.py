@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 import uuid
+import time
 
 
 class Post(BaseModel):
@@ -11,6 +12,7 @@ class Post(BaseModel):
     authority_name: str
     user_name: Optional[str]
     user_id: Optional[str]
+    time: int = int(time.time())
 
     @staticmethod
     def make_empty_post() -> "Post":
@@ -38,4 +40,5 @@ class Post(BaseModel):
             authority_name="",  # Authority name must be provided
             user_name="",
             user_id="",
+            time=int(time.time()),
         )

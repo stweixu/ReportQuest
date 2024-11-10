@@ -18,7 +18,8 @@ def up():
         imagePath TEXT,
         AuthorityName TEXT NOT NULL,
         UserName TEXT,
-        UserID TEXT
+        UserID TEXT,
+        time INTEGER NOT NULL
     );
     """
     try:

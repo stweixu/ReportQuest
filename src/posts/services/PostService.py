@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from typing import Optional, Tuple, List
 import uuid
 from src.posts.services.AuthorityService import AuthorityService
@@ -43,8 +44,8 @@ class PostService:
         """Insert a new post into the Post table."""
         conn = PostService.get_connection_instance()
         insert_query = """
-        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID)
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID, time)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = conn.cursor()
@@ -58,6 +59,7 @@ class PostService:
                     post.authority_name,
                     post.user_name,
                     post.user_id,
+                    post.time,
                 ),
             )
             conn.commit()
@@ -187,6 +189,7 @@ class PostService:
             authority_name=result[4],
             user_name=result[5],
             user_id=result[6],
+            time=result[7],
         )
 
     @staticmethod
@@ -237,13 +240,14 @@ class PostService:
             authority_name=authority_name,
             user_name=user_name,
             user_id=user_id,
+            time=int(time.time()),
         )
 
         # Insert the post into the Post database
         conn = PostService.get_connection_instance()
         insert_query = """
-        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID)
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID, time)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = conn.cursor()
@@ -257,6 +261,7 @@ class PostService:
                     post.authority_name,
                     post.user_name,
                     post.user_id,
+                    post.time,
                 ),
             )
             conn.commit()
