@@ -207,6 +207,14 @@ async def get_report_picture(report_id: uuid.UUID):
     image_path = f"{image_dir}/{report_id}.png"
     default_path = f"{image_dir}/default.png"
 
+    if not os.path.isfile(image_path):
+        # try .jpg
+        image_path = f"{image_dir}/{report_id}.jpg"
+
+    if not os.path.isfile(image_path):
+        # try .jpeg
+        image_path = f"{image_dir}/{report_id}.jpeg"
+
     # Check if the image exists
     if not os.path.isfile(image_path):
         return FileResponse(default_path, media_type="image/png")
