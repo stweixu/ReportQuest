@@ -43,13 +43,13 @@ async def read_reward_by_id(reward_id: str):
     return reward
 
 
-@router.post("/", response_model=Reward)
+@router.post("/")
 async def create_reward(
     description: str,
     pointsRequired: int,
     availability: int,
     validity: Optional[int] = 0,
-    userID: Optional[str] = None,
+    file: UploadFile = File(...),
 ):
     """Create a new reward."""
     new_reward = Reward(
@@ -57,10 +57,27 @@ async def create_reward(
         description=description,
         pointsRequired=pointsRequired,
         validity=validity,
-        availability=availability,
-        userID=userID or str(uuid.uuid4()),
+        availability=availability
     )
     status_code = reward_service.create_reward(new_reward)
+
+    image_dir = "voucherimg"
+    # Ensure the directory exists
+    os.makedirs(image_dir, exist_ok=True)
+
+    # Define the image path based on the identifier and original extension
+    file_extension = file.filename.split(".")[-1].lower()
+    image_path = os.path.join(image_dir, f"{new_reward.rewardID}.{file_extension}")
+
+    # Save the uploaded file
+    try:
+        with open(image_path, "wb") as image_file:
+            image_file.write(await file.read())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save image: {str(e)}",
+        )
     if status_code == 201:
         return new_reward
     elif status_code == 400:
