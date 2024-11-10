@@ -185,6 +185,21 @@ async def delete_report(report_id: str):
         )
     return {"detail": "Report deleted successfully."}
 
+@router.put("/{report_id}/status", response_model=dict)
+async def update_report_status(report_id: str, status: str):
+    """Update the status of a report."""
+    status_code = report_service.update_report_status(report_id, status)
+    if status_code == 404:
+        raise HTTPException(
+            status_code=404, detail="Report not found"
+        )
+    elif status_code != 200:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update report status.",
+        )
+    return {"detail": "Report status updated successfully."}
+
 
 @router.get("/reportPicture/{report_id}")
 async def get_report_picture(report_id: uuid.UUID):

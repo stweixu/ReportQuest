@@ -72,7 +72,31 @@ class ReportService:
         except sqlite3.Error as e:
             print(f"Error inserting report: {e}")
             return 500, None  # Internal server error
-
+        
+    def check_report_exists(self, report_id: str) -> bool:
+        """Check if a report exists in the Report table. Create the report if they do not exist."""
+        query = "SELECT * FROM Report WHERE ReportID = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (report_id,))
+        result = cursor.fetchone()
+        if result:
+            return True
+        else:
+            return False
+        
+    def update_report_status(self, report_id: str, status: str) -> int:
+        """Update the status of a report in the Report table."""
+        # check if report exists
+        if not self.check_report_exists(report_id):
+            return 404  # Not Found
+        query = "UPDATE Report SET Status = ? WHERE ReportID = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (status, report_id))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+    
     def read_report_by_user_id(self, user_id: str) -> Tuple[int, List[Report]]:
         """Fetch all reports from the Report table by user ID."""
         query = "SELECT * FROM Report WHERE UserID = ?"
