@@ -19,7 +19,8 @@ def up():
         title TEXT,
         Datetime INTEGER NOT NULL,
         Location TEXT NOT NULL,
-        Points INTEGER NOT NULL
+        Points INTEGER NOT NULL,
+        OllamaDescription TEXT
     );
     """
     try:

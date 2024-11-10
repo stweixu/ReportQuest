@@ -20,6 +20,7 @@ class Report(BaseModel):
     datetime: int
     location: str
     points: int
+    ollama_description: str
 
 
 # Database connection
@@ -29,8 +30,8 @@ conn = sqlite3.connect("database/reports.db")
 def create_report(report: Report) -> Tuple[int, Optional[Report]]:
     """Insert a new report into the Report table."""
     insert_query = """
-        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location, Points)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location, Points, OllamaDescription)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
     try:
         cursor = conn.cursor()
@@ -49,6 +50,7 @@ def create_report(report: Report) -> Tuple[int, Optional[Report]]:
                 report.datetime,
                 report.location,
                 report.points,
+                report.ollama_description,
             ),
         )
         conn.commit()
@@ -92,6 +94,7 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             datetime=int(time.time()),  # Unix timestamp
             location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Location as a string
             points=random.randint(60, 100),
+            ollama_description=fake.catch_phrase(),
         )
         reports.append(report)
 

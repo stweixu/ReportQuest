@@ -104,7 +104,7 @@ class PointsService:
         if result["ratings"][0] < 5:
             return 0
         addable_points = await self.calculate_points(result["ratings"])
-        return addable_points, (result["ratings"][0], result["ratings"][1], result["ratings"][2]), result["title"]
+        return addable_points, (result["ratings"][0], result["ratings"][1], result["ratings"][2]), result["title"], result["analysis"]
 
     async def evaluate_and_add_points(self, report: Report) -> None:
         """Evaluate points and add them to the user based on report details."""
@@ -120,7 +120,7 @@ class PointsService:
         print(f"Report created with report ID {report.report_id}")
 
         # Evaluate new points
-        new_points, ratings, title = await self.evaluate_points(
+        new_points, ratings, title, analysis = await self.evaluate_points(
             report.image_path, report.description
         )
         if new_points:
@@ -129,6 +129,7 @@ class PointsService:
             self.update_ratings(report.report_id, ratings, points)
             self.update_title(report.report_id, title)
             self.set_report_status_in_progress(report.report_id)
+            self.set_ollama_description(report.report_id, analysis)
         # Identify the relevant authority
         result = await self.ollama.get_relevant_authority_ollama(report.description)
         print(f"Relevant authority: {result}")
@@ -139,6 +140,18 @@ class PointsService:
         print(nearest)
         return
     
+    def set_ollama_description(self, report_id: str, description: str) -> int:
+        """Set the ollama description of a report in the Report table."""
+        conn = sqlite3.connect("database/reports.db")
+        update_query = "UPDATE Report SET OllamaDescription = ? WHERE ReportID = ?;"
+        cursor = conn.cursor()
+        cursor.execute(update_query, (description, report_id))
+        conn.commit()
+        conn.close()
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+
     def set_report_status_in_progress(self, report_id: str) -> int:
         """Set the status of a report in the Report table to 'In Progress'."""
         conn = sqlite3.connect("database/reports.db")

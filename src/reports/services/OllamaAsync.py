@@ -103,7 +103,7 @@ class OllamaChat:
         )
 
 
-        return {"ratings": ratings_int, "title": title}
+        return {"ratings": ratings_int, "title": title, "analysis": image_analysis}
 
     async def find_nearest_authority(
         self, input_lat: float, input_lon: float, authority_type: str

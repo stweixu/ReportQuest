@@ -1,8 +1,6 @@
 import sqlite3
 from typing import List, Tuple, Optional
-from src.reports.models.ReportModels import (
-    Report,
-)  # Assuming the Report model is stored here
+from src.reports.models.ReportModels import Report  # Assuming the Report model is stored here
 from src.users.services.UserService import UserService
 
 
@@ -23,9 +21,11 @@ class ReportService:
             ReportID TEXT PRIMARY KEY,
             Description TEXT,
             imagePath TEXT,
-            title TEXT,
+            Title TEXT,
             Datetime INTEGER NOT NULL,
-            Location TEXT NOT NULL
+            Location TEXT NOT NULL,
+            Points INTEGER DEFAULT 0,
+            OllamaDescription TEXT
         );
         """
         try:
@@ -39,8 +39,8 @@ class ReportService:
     def create_report(self, report: Report) -> Tuple[int, Optional[Report]]:
         """Insert a new report into the Report table."""
         insert_query = """
-        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, title, Datetime, Location, Points)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, Title, Datetime, Location, Points, OllamaDescription)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = self.conn.cursor()
@@ -59,6 +59,7 @@ class ReportService:
                     report.datetime,
                     report.location,
                     report.points,
+                    report.ollama_description,
                 ),
             )
             self.conn.commit()
@@ -79,9 +80,7 @@ class ReportService:
         reports = [Report(**self._parse_report(result)) for result in results]
         return 200, reports  # OK
 
-    def get_top_k_reports_by_severity(
-        self, k: int, resolved: bool = False
-    ) -> Tuple[int, List[Report]]:
+    def get_top_k_reports_by_severity(self, k: int, resolved: bool = False) -> Tuple[int, List[Report]]:
         """Fetch top k reports from the Report table by severity."""
         query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
         if not resolved:
@@ -103,9 +102,7 @@ class ReportService:
         else:
             return 404, None  # Not Found
 
-    def search_reports_by_description(
-        self, description: str
-    ) -> Tuple[int, List[Report]]:
+    def search_reports_by_description(self, description: str) -> Tuple[int, List[Report]]:
         """Search reports by description using wildcards."""
         query = "SELECT * FROM Report WHERE Description LIKE ?"
         wildcard_description = f"%{description}%"
@@ -117,7 +114,7 @@ class ReportService:
 
     def search_reports_by_title(self, title: str) -> Tuple[int, List[Report]]:
         """Search reports by title using wildcards."""
-        query = "SELECT * FROM Report WHERE title LIKE ?"
+        query = "SELECT * FROM Report WHERE Title LIKE ?"
         wildcard_title = f"%{title}%"
         cursor = self.conn.cursor()
         cursor.execute(query, (wildcard_title,))
@@ -135,6 +132,14 @@ class ReportService:
             return 404  # Not Found
         return 200  # OK
 
+    def update_report_points(self, report_id: str, points: int) -> int:
+        """Update the points of a report in the database."""
+        update_query = "UPDATE Report SET Points = ? WHERE ReportID = ?"
+        cursor = self.conn.cursor()
+        cursor.execute(update_query, (points, report_id))
+        self.conn.commit()
+        return 200
+
     def _parse_report(self, result: Tuple) -> dict:
         """Helper method to parse a database row into a Report dictionary."""
         return {
@@ -149,6 +154,8 @@ class ReportService:
             "title": result[8],
             "datetime": result[9],
             "location": result[10],
+            "points": result[11],
+            "ollama_description": result[12],
         }
 
     def close_connection(self):
@@ -157,16 +164,6 @@ class ReportService:
             self.conn.close()
             print("Database connection closed.")
 
-    def update_report_points(self, report_id: str, points: int) -> int:
-        """Update the points of a report in the database."""
-        update_query = "UPDATE Report SET Severity = ? WHERE ReportID = ?"
-        cursor = self.conn.cursor()
-        cursor.execute(update_query, (points, report_id))
-        self.conn.commit()
-        return 200
-
     def check_user_exists(self, user_id: str) -> bool:
         """Check if a user exists in the database using UserService."""
-        return UserService(sqlite3.connect("database/users.db")).check_user_exists(
-            user_id
-        )
+        return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)

@@ -15,3 +15,4 @@ class Report(BaseModel):
     datetime: int
     location: str
     points: int = 0
+    ollama_description: str = ""

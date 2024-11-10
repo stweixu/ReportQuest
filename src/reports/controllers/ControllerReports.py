@@ -109,18 +109,6 @@ async def search_reports_by_title(title: str):
     return reports
 
 
-@router.get("/search/uen", response_model=list[Report])
-async def search_reports_by_uen(uen: str):
-    """Search reports by UEN."""
-    status_code, reports = report_service.search_reports_by_uen(uen)
-    if status_code != 200:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to search reports by UEN.",
-        )
-    return reports
-
-
 @router.post("/submit-report/")
 async def submit_report(
     user_id: str = Form(...),
