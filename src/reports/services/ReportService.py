@@ -1,6 +1,8 @@
 import sqlite3
 from typing import List, Tuple, Optional
-from src.reports.models.ReportModels import Report  # Assuming the Report model is stored here
+from src.reports.models.ReportModels import (
+    Report,
+)  # Assuming the Report model is stored here
 from src.users.services.UserService import UserService
 
 
@@ -80,7 +82,9 @@ class ReportService:
         reports = [Report(**self._parse_report(result)) for result in results]
         return 200, reports  # OK
 
-    def get_top_k_reports_by_severity(self, k: int, resolved: bool = False) -> Tuple[int, List[Report]]:
+    def get_top_k_reports_by_severity(
+        self, k: int, resolved: bool = False
+    ) -> Tuple[int, List[Report]]:
         """Fetch top k reports from the Report table by severity."""
         query = "SELECT * FROM Report ORDER BY Severity DESC LIMIT ?"
         if not resolved:
@@ -102,7 +106,9 @@ class ReportService:
         else:
             return 404, None  # Not Found
 
-    def search_reports_by_description(self, description: str) -> Tuple[int, List[Report]]:
+    def search_reports_by_description(
+        self, description: str
+    ) -> Tuple[int, List[Report]]:
         """Search reports by description using wildcards."""
         query = "SELECT * FROM Report WHERE Description LIKE ?"
         wildcard_description = f"%{description}%"
@@ -166,4 +172,6 @@ class ReportService:
 
     def check_user_exists(self, user_id: str) -> bool:
         """Check if a user exists in the database using UserService."""
-        return UserService(sqlite3.connect("database/users.db")).check_user_exists(user_id)
+        return UserService(sqlite3.connect("database/users.db")).check_user_exists(
+            user_id
+        )

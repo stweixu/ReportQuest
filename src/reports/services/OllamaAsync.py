@@ -102,7 +102,6 @@ class OllamaChat:
             f"Respond with a straightforward and specific title only, like 'Man dies on street' or 'Cat stuck on tree.' Avoid figurative language, assumptions, or additional details."
         )
 
-
         return {"ratings": ratings_int, "title": title, "analysis": image_analysis}
 
     async def find_nearest_authority(

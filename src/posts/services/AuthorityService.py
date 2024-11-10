@@ -1,6 +1,8 @@
 import sqlite3
 from typing import Optional, Tuple, List
-from src.posts.models.AuthorityModel import Authority  # Assuming the Authority model is stored in this location
+from src.posts.models.AuthorityModel import (
+    Authority,
+)  # Assuming the Authority model is stored in this location
 
 
 class AuthorityService:
@@ -129,7 +131,4 @@ class AuthorityService:
     @staticmethod
     def parse_entry(result: Tuple) -> Authority:
         """Convert a database row into an Authority instance."""
-        return Authority(
-            user_id=result[0],
-            authority_name=result[1]
-        )
+        return Authority(user_id=result[0], authority_name=result[1])

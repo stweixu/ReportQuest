@@ -1,9 +1,11 @@
 import sqlite3
 from migration_utils import run_migration
 
+
 def get_connection_instance(db_name: str = "database/posts.db") -> sqlite3.Connection:
     """Establish a new connection to the database."""
     return sqlite3.connect(db_name)
+
 
 def up():
     """Create the Post table if it doesn't exist."""
@@ -29,6 +31,7 @@ def up():
     finally:
         conn.close()
 
+
 def down():
     """Delete the Post table if it exists."""
     conn = get_connection_instance()
@@ -42,6 +45,7 @@ def down():
         print(f"Error deleting Post table: {e}")
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     run_migration(up, down)

@@ -140,6 +140,7 @@ async def get_profile_picture(user_id: uuid.UUID):
     # Return the image file
     return FileResponse(image_path, media_type="image/png")
 
+
 @router.post("/profilePicture/{user_id}")
 async def update_profile_picture(user_id: uuid.UUID, file: bytes = File(...)):
     """Update the profile picture of a user."""

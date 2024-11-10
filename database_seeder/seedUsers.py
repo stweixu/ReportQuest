@@ -208,7 +208,7 @@ dummy_users = [
     User(
         userName="maxwell1",
         passwordHash=ph.hash("password1"),
-        emailAddress="maxweliau12345@outlook.com", 
+        emailAddress="maxweliau12345@outlook.com",
         loginStatus=False,
         points=0,
         notificationPreference="sms",
@@ -230,19 +230,17 @@ dummy_users = [
         userID=predefined_uuids[6],
     ),
     User(
-    userName="Bukit Batok Fire Station",
-    passwordHash=ph.hash("password1"),  # Example password
-    emailAddress="bukitbatokfirestation@example.com",  # Generates a unique email per authority
-    loginStatus=False,
-    points=0,
-    notificationPreference="sms",
-    notificationEnabled=True,
-    isAuthority=True,
-    isModerator=False,
-    userID=predefined_uuids[7]
+        userName="Bukit Batok Fire Station",
+        passwordHash=ph.hash("password1"),  # Example password
+        emailAddress="bukitbatokfirestation@example.com",  # Generates a unique email per authority
+        loginStatus=False,
+        points=0,
+        notificationPreference="sms",
+        notificationEnabled=True,
+        isAuthority=True,
+        isModerator=False,
+        userID=predefined_uuids[7],
     ),
-
-
     User(
         userName="Tampines Police Division",
         passwordHash=ph.hash("password1"),  # Example password
@@ -253,10 +251,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[8]
+        userID=predefined_uuids[8],
     ),
-
-
     User(
         userName="Ang Mo Kio Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -267,10 +263,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[9]
+        userID=predefined_uuids[9],
     ),
-
-
     User(
         userName="Marina Bay Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -281,10 +275,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[10]
+        userID=predefined_uuids[10],
     ),
-
-
     User(
         userName="Woodlands Police Division",
         passwordHash=ph.hash("password1"),  # Example password
@@ -295,10 +287,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[11]
+        userID=predefined_uuids[11],
     ),
-
-
     User(
         userName="Bedok Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -309,10 +299,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[12]
+        userID=predefined_uuids[12],
     ),
-
-
     User(
         userName="Jurong Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -323,10 +311,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[13]
+        userID=predefined_uuids[13],
     ),
-
-
     User(
         userName="Choa Chu Kang Police Post",
         passwordHash=ph.hash("password1"),  # Example password
@@ -337,10 +323,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[14]
+        userID=predefined_uuids[14],
     ),
-
-
     User(
         userName="Pasir Ris Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -351,10 +335,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[15]
+        userID=predefined_uuids[15],
     ),
-
-
     User(
         userName="Clementi Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -365,10 +347,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[16]
+        userID=predefined_uuids[16],
     ),
-
-
     User(
         userName="Hougang Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -379,10 +359,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[17]
+        userID=predefined_uuids[17],
     ),
-
-
     User(
         userName="Yishun Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -393,10 +371,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[18]
+        userID=predefined_uuids[18],
     ),
-
-
     User(
         userName="Geylang Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -407,10 +383,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[19]
+        userID=predefined_uuids[19],
     ),
-
-
     User(
         userName="Kreta Ayer Police Post",
         passwordHash=ph.hash("password1"),  # Example password
@@ -421,10 +395,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[20]
+        userID=predefined_uuids[20],
     ),
-
-
     User(
         userName="Bukit Merah Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -435,10 +407,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[21]
+        userID=predefined_uuids[21],
     ),
-
-
     User(
         userName="Serangoon Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -449,10 +419,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[22]
+        userID=predefined_uuids[22],
     ),
-
-
     User(
         userName="Sengkang Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -463,10 +431,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[23]
+        userID=predefined_uuids[23],
     ),
-
-
     User(
         userName="Bukit Panjang Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -477,10 +443,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[24]
+        userID=predefined_uuids[24],
     ),
-
-
     User(
         userName="Paya Lebar Fire Post",
         passwordHash=ph.hash("password1"),  # Example password
@@ -491,10 +455,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[25]
+        userID=predefined_uuids[25],
     ),
-
-
     User(
         userName="Queenstown Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -505,10 +467,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[26]
+        userID=predefined_uuids[26],
     ),
-
-
     User(
         userName="Toa Payoh Central Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -519,10 +479,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[27]
+        userID=predefined_uuids[27],
     ),
-
-
     User(
         userName="Tan Tock Seng Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -533,10 +491,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[28]
+        userID=predefined_uuids[28],
     ),
-
-
     User(
         userName="Singapore General Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -547,10 +503,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[29]
+        userID=predefined_uuids[29],
     ),
-
-
     User(
         userName="Khoo Teck Puat Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -561,10 +515,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[30]
+        userID=predefined_uuids[30],
     ),
-
-
     User(
         userName="Changi General Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -575,10 +527,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[31]
+        userID=predefined_uuids[31],
     ),
-
-
     User(
         userName="Mount Elizabeth Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -589,10 +539,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[32]
+        userID=predefined_uuids[32],
     ),
-
-
     User(
         userName="KK Women's and Children's Hospital",
         passwordHash=ph.hash("password1"),  # Example password
@@ -603,10 +551,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[33]
+        userID=predefined_uuids[33],
     ),
-
-
     User(
         userName="Singapore Civil Defence Force HQ",
         passwordHash=ph.hash("password1"),  # Example password
@@ -617,10 +563,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[34]
+        userID=predefined_uuids[34],
     ),
-
-
     User(
         userName="Police Cantonment Complex",
         passwordHash=ph.hash("password1"),  # Example password
@@ -631,10 +575,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[35]
+        userID=predefined_uuids[35],
     ),
-
-
     User(
         userName="Clementi Neighbourhood Police Centre",
         passwordHash=ph.hash("password1"),  # Example password
@@ -645,10 +587,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[36]
+        userID=predefined_uuids[36],
     ),
-
-
     User(
         userName="Eunos Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -659,10 +599,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[37]
+        userID=predefined_uuids[37],
     ),
-
-
     User(
         userName="Bukit Timah Community Club",
         passwordHash=ph.hash("password1"),  # Example password
@@ -673,10 +611,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[38]
+        userID=predefined_uuids[38],
     ),
-
-
     User(
         userName="Jurong West Police Division",
         passwordHash=ph.hash("password1"),  # Example password
@@ -687,10 +623,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[39]
+        userID=predefined_uuids[39],
     ),
-
-
     User(
         userName="Toa Payoh Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -701,10 +635,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[40]
+        userID=predefined_uuids[40],
     ),
-
-
     User(
         userName="Potong Pasir Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -715,10 +647,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[41]
+        userID=predefined_uuids[41],
     ),
-
-
     User(
         userName="Ghim Moh Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -729,10 +659,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[42]
+        userID=predefined_uuids[42],
     ),
-
-
     User(
         userName="Yew Tee Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -743,10 +671,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[43]
+        userID=predefined_uuids[43],
     ),
-
-
     User(
         userName="Kallang Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -757,10 +683,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[44]
+        userID=predefined_uuids[44],
     ),
-
-
     User(
         userName="Tanglin Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -771,10 +695,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[45]
+        userID=predefined_uuids[45],
     ),
-
-
     User(
         userName="Sembawang Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -785,10 +707,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[46]
+        userID=predefined_uuids[46],
     ),
-
-
     User(
         userName="Nanyang Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -799,10 +719,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[47]
+        userID=predefined_uuids[47],
     ),
-
-
     User(
         userName="Orchard Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -813,10 +731,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[48]
+        userID=predefined_uuids[48],
     ),
-
-
     User(
         userName="Cairnhill Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -827,10 +743,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[49]
+        userID=predefined_uuids[49],
     ),
-
-
     User(
         userName="Sentosa Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -841,10 +755,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[50]
+        userID=predefined_uuids[50],
     ),
-
-
     User(
         userName="Outram Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -855,10 +767,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[51]
+        userID=predefined_uuids[51],
     ),
-
-
     User(
         userName="Harbourfront Fire Post",
         passwordHash=ph.hash("password1"),  # Example password
@@ -869,10 +779,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[52]
+        userID=predefined_uuids[52],
     ),
-
-
     User(
         userName="Chinatown Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -883,10 +791,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[53]
+        userID=predefined_uuids[53],
     ),
-
-
     User(
         userName="Marine Parade Community Center",
         passwordHash=ph.hash("password1"),  # Example password
@@ -897,10 +803,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[54]
+        userID=predefined_uuids[54],
     ),
-
-
     User(
         userName="Newton Police Division",
         passwordHash=ph.hash("password1"),  # Example password
@@ -911,10 +815,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[55]
+        userID=predefined_uuids[55],
     ),
-
-
     User(
         userName="Kovan Fire Station",
         passwordHash=ph.hash("password1"),  # Example password
@@ -925,10 +827,8 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[56]
+        userID=predefined_uuids[56],
     ),
-
-
     User(
         userName="MacPherson Neighbourhood Police",
         passwordHash=ph.hash("password1"),  # Example password
@@ -939,7 +839,7 @@ dummy_users = [
         notificationEnabled=True,
         isAuthority=True,
         isModerator=False,
-        userID=predefined_uuids[57]
+        userID=predefined_uuids[57],
     ),
 ]
 

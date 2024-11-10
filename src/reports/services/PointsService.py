@@ -70,13 +70,15 @@ class PointsService:
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK
-    
-    def update_ratings(self, report_id: str, ratings: tuple[int], points:int) -> int:
+
+    def update_ratings(self, report_id: str, ratings: tuple[int], points: int) -> int:
         """Update the ratings for a report in the Report table."""
         conn = sqlite3.connect("database/reports.db")
         update_query = "UPDATE Report SET relevance = ?, severity = ?, urgency = ?, points = ? WHERE ReportID = ?;"
         cursor = conn.cursor()
-        cursor.execute(update_query, (ratings[0], ratings[1], ratings[2], points, report_id))
+        cursor.execute(
+            update_query, (ratings[0], ratings[1], ratings[2], points, report_id)
+        )
         conn.commit()
         conn.close()
         if cursor.rowcount == 0:
@@ -104,7 +106,12 @@ class PointsService:
         if result["ratings"][0] < 5:
             return 0
         addable_points = await self.calculate_points(result["ratings"])
-        return addable_points, (result["ratings"][0], result["ratings"][1], result["ratings"][2]), result["title"], result["analysis"]
+        return (
+            addable_points,
+            (result["ratings"][0], result["ratings"][1], result["ratings"][2]),
+            result["title"],
+            result["analysis"],
+        )
 
     async def evaluate_and_add_points(self, report: Report) -> None:
         """Evaluate points and add them to the user based on report details."""
@@ -139,7 +146,7 @@ class PointsService:
         )
         print(nearest)
         return
-    
+
     def set_ollama_description(self, report_id: str, description: str) -> int:
         """Set the ollama description of a report in the Report table."""
         conn = sqlite3.connect("database/reports.db")
@@ -163,7 +170,6 @@ class PointsService:
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK
-    
 
     def update_title(self, report_id: str, title: str) -> int:
         """Update the title for a report in the Report table."""
@@ -175,7 +181,7 @@ class PointsService:
         result = cursor.fetchone()
         if not result:
             return 404  # Not Found
-        
+
         if result[0] != "":
             return 200
         # else, update the title

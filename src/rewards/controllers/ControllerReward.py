@@ -57,7 +57,7 @@ async def create_reward(
         description=description,
         pointsRequired=pointsRequired,
         validity=validity,
-        availability=availability
+        availability=availability,
     )
     status_code = reward_service.create_reward(new_reward)
 
