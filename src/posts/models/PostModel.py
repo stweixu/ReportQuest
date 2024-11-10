@@ -25,7 +25,7 @@ class Post(BaseModel):
         )
     
     @staticmethod
-    def make_empty_post_with_details(title: str, description: str, image_path: str) -> "Post":
+    def make_empty_post_with_details(title: str, description: str, image_path: str = "") -> "Post":
         """Factory method to create an empty Post object with default values."""
         return Post(
             post_id=str(uuid.uuid4()),          # Empty post ID

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, FastAPI, HTTPException
+import os
+from fastapi import APIRouter, FastAPI, File, HTTPException, UploadFile
 from typing import Optional, List
 from src.posts.models.PostModel import Post
 from src.posts.services.PostService import PostService
@@ -6,25 +7,50 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/posts")
 
-class PostCreateRequest(BaseModel):
-    user_id: str
-    title: Optional[str]
-    description: Optional[str]
-    image_path: Optional[str]
 
-@router.post("/posts/", response_model=Post, status_code=201)
-def create_post(request: PostCreateRequest):
+@router.post("/posts/", status_code=200)
+async def create_post(
+    user_id: str,
+    title: Optional[str],
+    description: Optional[str],
+    image: Optional[UploadFile] = File(None),
+    ):
+    
     """Create a new post with authority and user information based on user_id."""
+
+    # Define the image path based on the identifier and original extension
+    file_extension = image.filename.split(".")[-1].lower()
+    image_dir = "postImages"
+    image_path = os.path.join(image_dir, f"{user_id}.{file_extension}")
+    # Ensure the directory exists
+    os.makedirs(image_dir, exist_ok=True)
+
     # Create an empty post with provided details
     post = Post.make_empty_post_with_details(
-        title=request.title,
-        description=request.description,
-        image_path=request.image_path
+        title=title,
+        description=description,
     )
+    
+    # Define the image path based on the identifier and original extension
+    file_extension = image.filename.split(".")[-1].lower()
+    image_path = os.path.join(image_dir, f"{post.post_id}.{file_extension}")
+
+    # Save the image
+    try:
+        with open(image_path, "wb") as image_file:
+            image_file.write(await image.read())
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to save image: {str(e)}",
+        )
+    
+    post.image_path = image_path
+
     # Use PostService to create a post with authority info
-    status_code, created_post = PostService.create_post_with_authority(request.user_id, post)
+    status_code, created_post = PostService.create_post_with_authority(user_id, post)
     if status_code == 201:
-        return created_post
+        return {"post_id": created_post.post_id, "title": created_post.title, "description": created_post.description, "image_path": created_post.image_path}
     elif status_code == 404:
         raise HTTPException(status_code=404, detail="User or authority not found")
     else:

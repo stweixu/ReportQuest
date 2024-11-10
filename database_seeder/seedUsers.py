@@ -148,7 +148,7 @@ dummy_users = [
     User(
         userName="jingxiang1",
         passwordHash=ph.hash("password1"),
-        emailAddress="jingxiang@example.com",
+        emailAddress="kehjingxiang@yahoo.com",
         loginStatus=False,
         points=0,
         notificationPreference="email",
@@ -196,7 +196,7 @@ dummy_users = [
     User(
         userName="amogh1",
         passwordHash=ph.hash("password1"),
-        emailAddress="amogh.sriman@example.com",
+        emailAddress="asriman2005@gmail.com",
         loginStatus=False,
         points=0,
         notificationPreference="sms",
@@ -208,7 +208,7 @@ dummy_users = [
     User(
         userName="maxwell1",
         passwordHash=ph.hash("password1"),
-        emailAddress="maxwell@example.com",
+        emailAddress="maxweliau12345@outlook.com", 
         loginStatus=False,
         points=0,
         notificationPreference="sms",

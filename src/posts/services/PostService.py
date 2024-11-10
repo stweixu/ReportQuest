@@ -173,7 +173,7 @@ class PostService:
     def get_user_name(user_id: str) -> Optional[str]:
         """Fetch the user name from the user.db based on the user_id."""
         conn = sqlite3.connect("database/users.db")
-        query = "SELECT UserName FROM Users WHERE UserID = ?;"
+        query = "SELECT UserName FROM User WHERE UserID = ?;"
         try:
             cursor = conn.cursor()
             cursor.execute(query, (user_id,))
