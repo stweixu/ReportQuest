@@ -94,6 +94,7 @@ async def get_post_image(post_id: str):
     else:
         image_path = os.path.join(image_dir, f"default.png")
     # read the file contents
+    print(image_path)
     return FileResponse(image_path, media_type="image/png")
 
 
