@@ -11,16 +11,19 @@ def up():
     create_table_query = """
     CREATE TABLE IF NOT EXISTS Post (
         PostID TEXT PRIMARY KEY,
+        Title TEXT,
         Description TEXT,
         imagePath TEXT,
-        AuthorityName TEXT NOT NULL
+        AuthorityName TEXT NOT NULL,
+        UserName TEXT,
+        UserID TEXT
     );
     """
     try:
         cursor = conn.cursor()
         cursor.execute(create_table_query)
         conn.commit()
-        print("Post table created successfully in new_database.db.")
+        print("Post table created successfully in posts.db.")
     except sqlite3.Error as e:
         print(f"Error creating Post table: {e}")
     finally:
@@ -34,7 +37,7 @@ def down():
         cursor = conn.cursor()
         cursor.execute(drop_table_query)
         conn.commit()
-        print("Post table deleted successfully from new_database.db.")
+        print("Post table deleted successfully from posts.db.")
     except sqlite3.Error as e:
         print(f"Error deleting Post table: {e}")
     finally:

@@ -4,6 +4,7 @@ from src.users.controllers.ControllerUser import router as user_router
 from src.users.controllers.ControllerPublic import router as public_router
 from src.reports.controllers.ControllerReports import router as reports_router
 from src.rewards.controllers.ControllerReward import router as rewards_router
+from src.posts.controllers.ControllerPosts import router as posts_router
 import uvicorn
 
 app = FastAPI()
@@ -42,6 +43,8 @@ app.include_router(user_router, prefix="/users", tags=["users"])
 app.include_router(reports_router, prefix="/reports", tags=["reports"])
 
 app.include_router(rewards_router, prefix="/rewards", tags=["rewards"])
+
+app.include_router(posts_router, prefix="/posts", tags=["posts"])
 
 
 @app.get("/")

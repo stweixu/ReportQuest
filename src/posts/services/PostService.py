@@ -1,5 +1,7 @@
 import sqlite3
 from typing import Optional, Tuple, List
+import uuid
+from src.posts.services.AuthorityService import AuthorityService
 from src.posts.models.PostModel import Post  # Assuming the Post model is stored in this location
 
 
@@ -16,16 +18,19 @@ class PostService:
         create_table_query = """
         CREATE TABLE IF NOT EXISTS Post (
             PostID TEXT PRIMARY KEY,
+            Title TEXT,
             Description TEXT,
             imagePath TEXT,
-            AuthorityName TEXT NOT NULL
+            AuthorityName TEXT NOT NULL,
+            UserName TEXT,
+            UserID TEXT
         );
         """
         try:
             cursor = conn.cursor()
             cursor.execute(create_table_query)
             conn.commit()
-            print("Post table created successfully.")
+            print("Post table created successfully with updated schema.")
         except sqlite3.Error as e:
             print(f"Error creating Post table: {e}")
         finally:
@@ -36,12 +41,12 @@ class PostService:
         """Insert a new post into the Post table."""
         conn = PostService.get_connection_instance()
         insert_query = """
-        INSERT INTO Post (PostID, Description, imagePath, AuthorityName)
-        VALUES (?, ?, ?, ?);
+        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = conn.cursor()
-            cursor.execute(insert_query, (post.post_id, post.description, post.image_path, post.authority_name))
+            cursor.execute(insert_query, (post.post_id, post.title, post.description, post.image_path, post.authority_name, post.user_name, post.user_id))
             conn.commit()
             return 201, post  # Created
         except sqlite3.IntegrityError as e:
@@ -54,12 +59,15 @@ class PostService:
             conn.close()
 
     @staticmethod
-    def update_entry(post_id: str, new_description: Optional[str] = None, new_image_path: Optional[str] = None, new_authority_name: Optional[str] = None) -> int:
+    def update_entry(post_id: str, new_title: Optional[str] = None, new_description: Optional[str] = None, new_image_path: Optional[str] = None, new_authority_name: Optional[str] = None, new_user_id: Optional[str] = None) -> int:
         """Update fields of an existing post by post_id."""
         conn = PostService.get_connection_instance()
         update_fields = []
         params = []
 
+        if new_title:
+            update_fields.append("Title = ?")
+            params.append(new_title)
         if new_description:
             update_fields.append("Description = ?")
             params.append(new_description)
@@ -69,6 +77,9 @@ class PostService:
         if new_authority_name:
             update_fields.append("AuthorityName = ?")
             params.append(new_authority_name)
+        if new_user_id:
+            update_fields.append("UserID = ?")
+            params.append(new_user_id)
 
         if not update_fields:
             print("No fields to update.")
@@ -150,7 +161,71 @@ class PostService:
         """Convert a database row into a Post instance."""
         return Post(
             post_id=result[0],
-            description=result[1],
-            image_path=result[2],
-            authority_name=result[3]
+            title=result[1],
+            description=result[2],
+            image_path=result[3],
+            authority_name=result[4],
+            user_name=result[5],
+            user_id=result[6]
         )
+    
+    @staticmethod
+    def get_user_name(user_id: str) -> Optional[str]:
+        """Fetch the user name from the user.db based on the user_id."""
+        conn = sqlite3.connect("database/users.db")
+        query = "SELECT UserName FROM Users WHERE UserID = ?;"
+        try:
+            cursor = conn.cursor()
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
+            if result:
+                return result[0]  # UserName
+            return None  # User not found
+        except sqlite3.Error as e:
+            print(f"Error retrieving user name: {e}")
+            return None
+        finally:
+            conn.close()
+    
+    @staticmethod
+    def create_post_with_authority(user_id: str, post: Post) -> Tuple[int, Optional[Post]]:
+        """Create a new post using the authority name and user name retrieved from their respective databases."""
+        # Use AuthorityService to fetch the authority name associated with the user_id
+        status_code, authority = AuthorityService.read_entry(user_id)
+        if status_code != 200 or not authority:
+            print(f"No authority found with user_id: {user_id}")
+            return 404, None  # Not Found
+
+        # Retrieve the authority name from the Authority entry
+        authority_name = authority.authority_name
+
+        # Retrieve the user name from the Users database
+        user_name = PostService.get_user_name(user_id)
+        if not user_name:
+            print(f"No user found with user_id: {user_id}")
+            return 404, None  # Not Found
+
+        # Update the post object with a generated post_id, authority name, user name, and user_id
+        post_id = str(uuid.uuid4())  # Generate a unique post_id
+        post = Post(post_id=post_id, title=post.title, description=post.description, image_path=post.image_path, authority_name=authority_name, user_name=user_name, user_id=user_id)
+        
+        # Insert the post into the Post database
+        conn = PostService.get_connection_instance()
+        insert_query = """
+        INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+        """
+        try:
+            cursor = conn.cursor()
+            cursor.execute(insert_query, (post.post_id, post.title, post.description, post.image_path, post.authority_name, post.user_name, post.user_id))
+            conn.commit()
+            print(f"Post created successfully with post_id: {post_id}")
+            return 201, post  # Created
+        except sqlite3.IntegrityError as e:
+            print(f"Error: post_id already exists - {e}")
+            return 400, None  # Bad request
+        except sqlite3.Error as e:
+            print(f"Error inserting post: {e}")
+            return 500, None  # Internal server error
+        finally:
+            conn.close()
