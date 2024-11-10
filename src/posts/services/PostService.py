@@ -231,8 +231,9 @@ class PostService:
             return 404, None  # Not Found
 
         # Update the post object with a generated post_id, authority name, user name, and user_id
+        post_id = post.post_id # Generate a unique post_id
         post = Post(
-            post_id=post.user_id,
+            post_id=post_id,
             title=post.title,
             description=post.description,
             image_path=post.image_path,
