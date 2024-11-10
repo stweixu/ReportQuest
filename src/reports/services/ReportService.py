@@ -84,6 +84,16 @@ class ReportService:
         else:
             return False
         
+    def read_report_by_authority_id(self, authority_id: str) -> Tuple[int, List[Report]]:
+        """Fetch all reports from the Report table by authority ID."""
+        print(authority_id)
+        query = "SELECT * FROM Report WHERE AuthorityID = ?"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (authority_id,))
+        results = cursor.fetchall()
+        reports = [Report(**self._parse_report(result)) for result in results]
+        return 200, reports  # OK
+        
     def update_report_status(self, report_id: str, status: str) -> int:
         """Update the status of a report in the Report table."""
         # check if report exists
@@ -186,6 +196,7 @@ class ReportService:
             "location": result[10],
             "points": result[11],
             "ollama_description": result[12],
+            "authority_id": result[13],
         }
 
     def close_connection(self):

@@ -84,6 +84,18 @@ async def read_report_by_id(report_id: str):
         )
     return report
 
+@router.get("/get_reports_by_authority_id/{authority_id}", response_model=list[Report])
+async def get_reports_by_authority_id(authority_id: str):
+    """Retrieve all reports submitted by a specific user."""
+    print("asdasdasdadasdas")
+    print(authority_id)
+    status_code, reports = report_service.read_report_by_authority_id(authority_id)
+    if status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve reports for the user.",
+        )
+    return reports
 
 @router.get("/search/description", response_model=list[Report])
 async def search_reports_by_description(description: str):

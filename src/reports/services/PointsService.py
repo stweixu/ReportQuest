@@ -144,6 +144,19 @@ class PointsService:
         nearest = await self.ollama.find_nearest_authority(
             float(lat), float(long), result
         )
+        # find the authority id from user table
+        user_conn = sqlite3.connect("database/users.db")
+        query = "SELECT UserID FROM User WHERE UserName = ?;"
+        cursor = user_conn.cursor()
+        cursor.execute(query, (nearest['Authority Name'],))
+        result = cursor.fetchone()
+        if result:
+            nearest["Authority Name"] = result[0]
+        else:
+            print("User not found")
+            return
+        # set the authority id
+        self.set_authority_id(report.report_id, result[0])
         print(nearest)
         return
 
@@ -153,6 +166,18 @@ class PointsService:
         update_query = "UPDATE Report SET OllamaDescription = ? WHERE ReportID = ?;"
         cursor = conn.cursor()
         cursor.execute(update_query, (description, report_id))
+        conn.commit()
+        conn.close()
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+    
+    def set_authority_id(self, report_id: str, authority_id: str) -> int:
+        """Set the authority id of a report in the Report table."""
+        conn = sqlite3.connect("database/reports.db")
+        update_query = "UPDATE Report SET AuthorityID = ? WHERE ReportID = ?;"
+        cursor = conn.cursor()
+        cursor.execute(update_query, (authority_id, report_id))
         conn.commit()
         conn.close()
         if cursor.rowcount == 0:

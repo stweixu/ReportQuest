@@ -16,3 +16,4 @@ class Report(BaseModel):
     location: str
     points: int = 0
     ollama_description: str = ""
+    authority_id: str = ""
