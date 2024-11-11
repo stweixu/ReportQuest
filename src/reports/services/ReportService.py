@@ -41,8 +41,8 @@ class ReportService:
     def create_report(self, report: Report) -> Tuple[int, Optional[Report]]:
         """Insert a new report into the Report table."""
         insert_query = """
-        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, Title, Datetime, Location, Points, OllamaDescription)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Report (UserID, Relevance, Severity, Urgency, Status, ReportID, Description, imagePath, Title, Datetime, Location, Points, OllamaDescription, AuthorityID)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
         try:
             cursor = self.conn.cursor()
@@ -62,6 +62,7 @@ class ReportService:
                     report.location,
                     report.points,
                     report.ollama_description,
+                    report.authority_id,
                 ),
             )
             self.conn.commit()
@@ -87,7 +88,7 @@ class ReportService:
     def read_report_by_authority_id(self, authority_id: str) -> Tuple[int, List[Report]]:
         """Fetch all reports from the Report table by authority ID."""
         print(authority_id)
-        query = "SELECT * FROM Report WHERE AuthorityID = ?"
+        query = "SELECT * FROM Report WHERE AuthorityID = ? ORDER BY datetime DESC"
         cursor = self.conn.cursor()
         cursor.execute(query, (authority_id,))
         results = cursor.fetchall()
@@ -109,7 +110,7 @@ class ReportService:
     
     def read_report_by_user_id(self, user_id: str) -> Tuple[int, List[Report]]:
         """Fetch all reports from the Report table by user ID."""
-        query = "SELECT * FROM Report WHERE UserID = ?"
+        query = "SELECT * FROM Report WHERE UserID = ? ORDER BY datetime DESC"
         cursor = self.conn.cursor()
         cursor.execute(query, (user_id,))
         results = cursor.fetchall()

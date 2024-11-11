@@ -165,7 +165,7 @@ class PostService:
     def read_all_entries() -> Tuple[int, List[Post]]:
         """Fetch all posts from the Post table."""
         conn = PostService.get_connection_instance()
-        query = "SELECT * FROM Post;"
+        query = "SELECT * FROM Post ORDER BY time DESC"
         try:
             cursor = conn.cursor()
             cursor.execute(query)
