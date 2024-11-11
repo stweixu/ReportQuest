@@ -125,6 +125,9 @@ class RewardService:
         if res[1] == None:  # not found
             return 404, None
         reward: Reward = res[1]
+        current_timestamp = int(time.time())
+        one_year_later_timestamp = current_timestamp + (365 * 24 * 60 * 60)
+        reward.validity = one_year_later_timestamp
         # look up the cost
         cost = reward.pointsRequired
         # lookup points in user DB
