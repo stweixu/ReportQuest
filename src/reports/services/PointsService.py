@@ -146,7 +146,7 @@ class PointsService:
         nearest = await self.ollama.find_nearest_authority(
             float(lat), float(long), result
         )
-        self.bot.sendText(f"Report ID: {report.report_id}\nNearest Authority: {nearest['Authority Name']}\nDistance: {nearest['Distance']} km\nReport Description: {report.description}")
+        self.bot.sendText(f"Report ID: {report.report_id}\n\nNearest Authority: {nearest['Authority Name']}\n\nReport Description: {report.description}\n\nRelevance: {ratings[0]}\n\nSeverity: {ratings[1]}\n\nUrgency: {ratings[2]}")
         # find the authority id from user table
         user_conn = sqlite3.connect("database/users.db")
         query = "SELECT UserID FROM User WHERE UserName = ?;"

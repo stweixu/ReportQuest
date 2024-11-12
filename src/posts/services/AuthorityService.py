@@ -30,7 +30,7 @@ class AuthorityService:
             print(f"Error creating Authority table: {e}")
         finally:
             conn.close()
-
+#
     @staticmethod
     def create_entry(authority: Authority) -> Tuple[int, Optional[Authority]]:
         """Insert a new authority into the Authority table."""
