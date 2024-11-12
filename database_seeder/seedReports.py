@@ -117,7 +117,7 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Location as a string
             points=random.randint(60, 100),
             ollama_description=fake.catch_phrase(),
-            authority_id=str(predefined_uuids[i % len(predefined_uuids)]),
+            authority_id=str(predefined_authority_id[i % len(predefined_authority_id)]),
         )
         reports.append(report)
 
