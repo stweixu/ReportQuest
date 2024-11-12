@@ -25,7 +25,7 @@ points_service = PointsService(
     sqlite3.connect("database/users.db")
 )  # Instantiate the PointsService
 
-IMAGE_SAVE_DIRECTORY = "images"
+IMAGE_SAVE_DIRECTORY = "img/reportimg"
 
 
 @router.post("/", response_model=Report)
@@ -217,7 +217,7 @@ async def update_report_status(report_id: str, status: str):
 async def get_report_picture(report_id: uuid.UUID):
     """Retrieve the report picture of a report."""
     # Define the path to the images directory
-    image_dir = "images"
+    image_dir = IMAGE_SAVE_DIRECTORY
     # Construct the image file path (assuming .png extension)
     image_path = f"{image_dir}/{report_id}.png"
     default_path = f"{image_dir}/default.png"

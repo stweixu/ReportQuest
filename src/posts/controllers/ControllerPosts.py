@@ -16,12 +16,13 @@ async def create_post(
     title: Optional[str],
     description: Optional[str],
     image: Optional[UploadFile] = File(None),
+    post_id: Optional[str] = None,
 ):
     """Create a new post with authority and user information based on user_id."""
 
     # Define the image path based on the identifier and original extension
     file_extension = image.filename.split(".")[-1].lower()
-    image_dir = "postImages"
+    image_dir = "img/postImages"
     image_path = os.path.join(image_dir, f"{user_id}.{file_extension}")
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
@@ -31,6 +32,8 @@ async def create_post(
         title=title,
         description=description,
     )
+    if post_id:
+        post.post_id = post_id
 
     # Define the image path based on the identifier and original extension
     file_extension = image.filename.split(".")[-1].lower()
@@ -79,7 +82,7 @@ def get_post(post_id: str):
 async def get_post_image(post_id: str):
     """Retrieve the image corresponding to the post identifier."""
     # Define the path to the images directory
-    image_dir = "postImages"
+    image_dir = "img/postImages"
     print("hello!")
     # Construct the image file path (assuming .png extension)
     # check if post_id is a png file

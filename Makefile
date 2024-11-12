@@ -1,3 +1,6 @@
+
+.PHONY: test clean migrate-full
+
 # running the main.py
 run:
 	python main.py
@@ -5,7 +8,7 @@ run:
 enable-ollama-gpu:
 	watch -n 0.5 nvidia-smi
 
-run-reloadable:
+run-reloadable: 
 	uvicorn main:app --reload
 
 # sync dependancies
@@ -34,3 +37,9 @@ generate-architecture:
 
 lint:
 	black .
+
+test:
+	make migrate-full && PYTHONPATH=./ pytest --verbose --disable-warnings && make-migrate-full
+
+clean:
+	rm -rf *.pyc __pycache__/

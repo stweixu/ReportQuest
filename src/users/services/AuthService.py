@@ -207,7 +207,7 @@ class AuthService:
             return 500, None  # Internal server error
 
     def send_verification_email(
-        self, email: str, username: str, verification_key: str
+    self, email: str, username: str, verification_key: str
     ) -> None:
         """Send verification email with a unique verification link."""
         subject = "Please Confirm Your Email to Complete Registration"
@@ -215,34 +215,63 @@ class AuthService:
 
         # Use an HTML email template for a more professional look
         body = f"""
+        <!DOCTYPE html>
         <html>
-        <body>
-            <p>Hello {username},</p>
-            
-            <p>Thank you for signing up with us! We’re excited to have you on board.</p>
-            
-            <p>To complete your registration, please confirm your email address by clicking the button below:</p>
-            
-            <p style="text-align: center;">
-                <a href="{verification_link}" style="padding: 10px 20px; color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
-                    Confirm Email Address
-                </a>
-            </p>
-            
-            <p>If the button doesn’t work, copy and paste this link into your browser:</p>
-            <p><a href="{verification_link}">{verification_link}</a></p>
-            
-            <p>Confirming your email helps us keep your account secure and ensures you’ll receive important updates.</p>
-            
-            <p>If you have any questions or didn’t sign up for this account, please reach out to our support team.</p>
-            
-            <p>Thank you,<br>
-            The {os.getenv("COMPANY_NAME", "Your Company")} Team</p>
+        <head>
+            <meta charset="UTF-8">
+            <title>Email Confirmation</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f7f7f7;">
+            <table width="100%" bgcolor="#f7f7f7" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td>
+                        <table align="center" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; background-color: #ffffff;">
+                            <tr>
+                                <td style="padding: 20px; text-align: center;">
+                                    <h2 style="color: #333333;">Welcome, {username}!</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0 20px 20px;">
+                                    <p style="color: #333333;">
+                                        Thank you for signing up with us! We're excited to have you on board.
+                                    </p>
+                                    <p style="color: #333333;">
+                                        To complete your registration, please confirm your email address by clicking the button below:
+                                    </p>
+                                    <p style="text-align: center; margin: 20px 0;">
+                                        <a href="{verification_link}" style="display: inline-block; padding: 14px 28px; font-size: 16px; color: #ffffff; background-color: #4caf50; text-decoration: none; border-radius: 5px; border: 1px solid #4caf50;">
+                                            Confirm Email Address
+                                        </a>
+                                    </p>
+                                    <p style="color: #333333;">
+                                        If the button doesn't work, copy and paste this link into your browser:
+                                    </p>
+                                    <p>
+                                        <a href="{verification_link}" style="color: #4caf50; word-break: break-all;">{verification_link}</a>
+                                    </p>
+                                    <p style="color: #333333;">
+                                        Confirming your email helps us keep your account secure and ensures you'll receive important updates.
+                                    </p>
+                                    <p style="color: #333333;">
+                                        If you have any questions or didn't sign up for this account, please reach out to our support team.
+                                    </p>
+                                    <p style="margin-top: 30px; color: #333333;">
+                                        Thank you,<br />
+                                        The {os.getenv("COMPANY_NAME", "Your Company")} Team
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </body>
         </html>
         """
 
         self.yag.send(to=email, subject=subject, contents=body)
+
 
     def reset_password(self, verification_key: str, new_password: str):
         """Reset a user's password using the provided verification key."""

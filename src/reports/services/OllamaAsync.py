@@ -159,28 +159,3 @@ class OllamaChat:
         else:
             return "Unknown"
 
-
-# async def main():
-#     chat = OllamaChat("llama3.2")
-
-#     # Run analyse_image_and_text and await it directly to get results asynchronously
-#     print("Starting image and text analysis...")
-#     res_task = asyncio.create_task(
-#         chat.analyse_image_and_text(
-#             "images/image.png",
-#             "What is this image?",
-#             "Man falling over, with crutches. He is wearing a blue shirt and black pants. The man is sitting on a bench and is looking down at the ground. There are trees in the background.",
-#         )
-#     )
-
-#     # Simulate doing other tasks while waiting for `analyse_image_and_text` to finish
-#     print("Doing other tasks while waiting...")
-#     await asyncio.sleep(100)  # Replace with any other asynchronous work if needed
-
-#     # Await the result of the image and text analysis task
-#     res = await res_task
-#     print("Analysis result:", res)
-
-
-# if __name__ == "__main__":
-#     asyncio.run(main())

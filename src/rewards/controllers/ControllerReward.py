@@ -61,7 +61,7 @@ async def create_reward(
     )
     status_code = reward_service.create_reward(new_reward)
 
-    image_dir = "voucherimg"
+    image_dir = "img/voucherimg"
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
 
@@ -110,7 +110,7 @@ async def update_reward_quantity(reward_id: str, quantity: int):
 @router.get("/{reward_id}/validity", response_model=dict)
 async def check_reward_validity(reward_id: str):
     """Check the validity of a reward."""
-    status_code, reward = reward_service.read_reward(reward_id)
+    status_code, reward = reward_service.read_reward_by_id(reward_id)
     if status_code == 404:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Reward not found"
@@ -189,7 +189,7 @@ async def wipe_rewards():
 async def get_reward_image(reward_identifier: str):
     """Retrieve the image corresponding to the reward identifier."""
     # Define the path to the images directory
-    image_dir = "voucherimg"
+    image_dir = "img/voucherimg"
     print("hello!")
     # Construct the image file path (assuming .png extension)
     # check if reward_id is a png file
@@ -219,7 +219,7 @@ async def get_reward_image(reward_identifier: str):
 async def upload_reward_image(reward_identifier: str, file: UploadFile = File(...)):
     """Upload an image corresponding to the reward identifier."""
     # Define the path to the images directory
-    image_dir = "voucherimg"
+    image_dir = "img/voucherimg"
     # Ensure the directory exists
     os.makedirs(image_dir, exist_ok=True)
 

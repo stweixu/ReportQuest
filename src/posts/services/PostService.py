@@ -1,48 +1,40 @@
 import sqlite3
 import time
 from typing import Optional, Tuple, List
-import uuid
 from src.posts.services.AuthorityService import AuthorityService
-from src.posts.models.PostModel import (
-    Post,
-)  # Assuming the Post model is stored in this location
-
+from src.posts.models.PostModel import Post
 
 class PostService:
+    
+    conn : Optional[sqlite3.Connection] = None
     @staticmethod
     def get_connection_instance() -> sqlite3.Connection:
         """Establish a new connection to the database."""
-        return sqlite3.connect("database/posts.db")
+        conn = sqlite3.connect("database/posts.db")
+        conn.row_factory = sqlite3.Row  # Optional: Makes rows accessible by column name
+        return conn
+
 
     @staticmethod
-    def create_post_table():
-        """Create the Post table if it doesn't exist."""
-        conn = PostService.get_connection_instance()
-        create_table_query = """
-        CREATE TABLE IF NOT EXISTS Post (
-            PostID TEXT PRIMARY KEY,
-            Title TEXT,
-            Description TEXT,
-            imagePath TEXT,
-            AuthorityName TEXT NOT NULL,
-            UserName TEXT,
-            UserID TEXT
-        );
-        """
+    def ensure_connection_open(conn: Optional[sqlite3.Connection]) -> sqlite3.Connection:
+        """Ensure that the connection is open, reopening it if necessary."""
+        if conn is None:
+            return PostService.get_connection_instance()
+        
         try:
-            cursor = conn.cursor()
-            cursor.execute(create_table_query)
-            conn.commit()
-            print("Post table created successfully with updated schema.")
-        except sqlite3.Error as e:
-            print(f"Error creating Post table: {e}")
-        finally:
-            conn.close()
+            conn.execute("SELECT 1;")
+        except sqlite3.ProgrammingError:
+            # Reopen the connection if it's closed
+            print("Connection was closed. Reopening it.")
+            conn = PostService.get_connection_instance()
+        
+        return conn
 
     @staticmethod
     def create_entry(post: Post) -> Tuple[int, Optional[Post]]:
         """Insert a new post into the Post table."""
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         insert_query = """
         INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID, time)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?);
@@ -65,7 +57,7 @@ class PostService:
             conn.commit()
             return 201, post  # Created
         except sqlite3.IntegrityError as e:
-            print(e)
+            print(f"IntegrityError: {e}")
             return 400, None  # Bad request: post_id already exists
         except sqlite3.Error as e:
             print(f"Error inserting post: {e}")
@@ -84,6 +76,7 @@ class PostService:
     ) -> int:
         """Update fields of an existing post by post_id."""
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         update_fields = []
         params = []
 
@@ -127,6 +120,7 @@ class PostService:
     def delete_entry(post_id: str) -> int:
         """Delete a post from the Post table by post_id."""
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         delete_query = "DELETE FROM Post WHERE PostID = ?;"
         try:
             cursor = conn.cursor()
@@ -145,6 +139,7 @@ class PostService:
     def read_entry(post_id: str) -> Tuple[int, Optional[Post]]:
         """Fetch a post by post_id."""
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         query = "SELECT * FROM Post WHERE PostID = ?;"
         try:
             cursor = conn.cursor()
@@ -165,6 +160,7 @@ class PostService:
     def read_all_entries() -> Tuple[int, List[Post]]:
         """Fetch all posts from the Post table."""
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         query = "SELECT * FROM Post ORDER BY time DESC"
         try:
             cursor = conn.cursor()
@@ -196,6 +192,7 @@ class PostService:
     def get_user_name(user_id: str) -> Optional[str]:
         """Fetch the user name from the user.db based on the user_id."""
         conn = sqlite3.connect("database/users.db")
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         query = "SELECT UserName FROM User WHERE UserID = ?;"
         try:
             cursor = conn.cursor()
@@ -231,7 +228,7 @@ class PostService:
             return 404, None  # Not Found
 
         # Update the post object with a generated post_id, authority name, user name, and user_id
-        post_id = post.post_id # Generate a unique post_id
+        post_id = post.post_id
         post = Post(
             post_id=post_id,
             title=post.title,
@@ -245,6 +242,7 @@ class PostService:
 
         # Insert the post into the Post database
         conn = PostService.get_connection_instance()
+        conn = PostService.ensure_connection_open(conn)  # Ensure the connection is open
         insert_query = """
         INSERT INTO Post (PostID, Title, Description, imagePath, AuthorityName, UserName, UserID, time)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?);

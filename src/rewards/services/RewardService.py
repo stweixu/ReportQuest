@@ -134,7 +134,10 @@ class RewardService:
         conn_user = sqlite3.connect("database/users.db")
         cursor = conn_user.cursor()
         cursor.execute("SELECT points FROM User WHERE userID = ?;", (user_id,))
-        points = cursor.fetchone()[0]
+        points = cursor.fetchone()
+        if points is None:
+            return 404, None
+        points = points[0]
         if points < cost:
             return 403, None
         print("hello")

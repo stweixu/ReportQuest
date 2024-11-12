@@ -129,7 +129,7 @@ async def wipe_users():
 async def get_profile_picture(user_id: uuid.UUID):
     """Retrieve the profile picture of a user."""
     # Define the path to the images directory
-    image_dir = "profilepics"
+    image_dir = "img/profilepics"
     # Construct the image file path (assuming .png extension)
     image_path = f"{image_dir}/{user_id}.png"
 
@@ -150,7 +150,7 @@ async def update_profile_picture(user_id: uuid.UUID, file: bytes = File(...)):
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
     # Define the path to the images directory
-    image_dir = "profilepics"
+    image_dir = "img/profilepics"
     # Construct the image file path (assuming .png extension)
     image_path = f"{image_dir}/{user_id}.png"
     # update the image
