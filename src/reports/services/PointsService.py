@@ -6,13 +6,15 @@ from src.reports.models.ReportModels import Report
 from src.reports.services.OllamaAsync import OllamaChat
 from src.reports.services.ReportService import ReportService
 import asyncio
-
+from src.reports.services.telegramBot import telegramBot
 
 class PointsService:
     def __init__(self, conn: sqlite3.Connection, db_file: str = "database/users.db"):
         # Initialize the connection to the database
         self.conn = conn
         self.ollama = OllamaChat("llama3.2")
+        self.bot = telegramBot(botToken = "8163519930:AAHaPms3-hoBN5d7SRScXdsyeW-UBHaSXro", chatID = "-1002377143830")
+
 
     def create_user(self, user_id: str) -> None:
         """Create the user in the User table with initial points set to 0 if it doesn't exist."""
@@ -144,6 +146,7 @@ class PointsService:
         nearest = await self.ollama.find_nearest_authority(
             float(lat), float(long), result
         )
+        self.bot.sendText(f"Report ID: {report.report_id}\nNearest Authority: {nearest['Authority Name']}\nDistance: {nearest['Distance']} km\nReport Description: {report.description}")
         # find the authority id from user table
         user_conn = sqlite3.connect("database/users.db")
         query = "SELECT UserID FROM User WHERE UserName = ?;"

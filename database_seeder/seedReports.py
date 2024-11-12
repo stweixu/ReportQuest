@@ -76,6 +76,26 @@ predefined_uuids = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174005"),
 ]
 
+predefined_authority_id = [    
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174041"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174042"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174043"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174044"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174045"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174046"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174047"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174048"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174049"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174050"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174051"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174052"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174053"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174054"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174055"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174056"),
+    uuid.UUID("123e4567-e89b-12d3-a456-426614174057"),
+]
+
 
 def generate_fake_reports(num_reports: int) -> List[Report]:
     """Generate a list of fake Report entries."""
@@ -97,6 +117,7 @@ def generate_fake_reports(num_reports: int) -> List[Report]:
             location=f"{random.randint(1, 100)}.{random.randint(1, 100)},{random.randint(1, 100)}.{random.randint(1, 100)}",  # Location as a string
             points=random.randint(60, 100),
             ollama_description=fake.catch_phrase(),
+            authority_id=str(predefined_uuids[i % len(predefined_uuids)]),
         )
         reports.append(report)
 
