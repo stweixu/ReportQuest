@@ -17,5 +17,6 @@ for i in os.listdir(base_path):
 
 command = f"python {base_path}/seedAuthority.py"
 print(f"executing {command}")
+os.system(command)
 
 print("done seeding")
