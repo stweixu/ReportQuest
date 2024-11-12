@@ -333,9 +333,11 @@ class AuthService:
             <p>You recently requested to reset your password for your account. To reset your password, please click the button below:</p>
             
             <p style="text-align: center;">
-                <a href="{reset_link}" style="padding: 10px 20px; color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
-                    Reset Password
-                </a>
+                <p style="text-align: center; margin: 20px 0;">
+                    <a href="{reset_link}" style="display: inline-block; padding: 14px 28px; font-size: 16px; color: #ffffff; background-color: #4caf50; text-decoration: none; border-radius: 5px; border: 1px solid #4caf50;">
+                        Reset Password
+                    </a>
+                </p>
             </p>
             
             <p>If the button doesn’t work, copy and paste this link into your browser:</p>
