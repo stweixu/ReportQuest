@@ -71,6 +71,59 @@ make run-reloadable
 
 9. To test the application, open http://0.0.0.0:8000/docs in your browser and test endpoints
 
-## Setup on MACOS
+---
 
-1. Hey man tbh, i havent touched macOS in a while
+### **File Structure Overview**
+
+This project is organized as follows:
+
+-   **Root Directory**:
+    -   **`CHECKPOINT.md`**: Checkpoint documentation or notes related to project progress.
+    -   **`README.md`**: Main documentation file describing the project, installation, and usage instructions.
+    -   **`Makefile`**: Contains commands to automate common tasks in the project.
+    -   **`config.py`**: Configuration settings for the application.
+    -   **`requirements.txt`**: Lists Python dependencies.
+    -   **`main.py`**: Main entry point of the application.
+    -   **`migrate.py`**: Handles database migrations.
+    -   **`seed.py`**: Seeds initial data into the database.
+-   **`database/`**:
+
+    -   Contains various SQLite databases used by the application (`authorities.csv`, `authority.db`, `myRewards.db`, `points.db`, `posts.db`, `reports.db`, `rewards.db`, `users.db`).
+
+-   **`database_seeder/`**:
+
+    -   Scripts to populate specific tables in the database:
+        -   **`seedAuthority.py`**: Seeds data for authority information.
+        -   **`seedMyRewards.py`**, **`seedReports.py`**, **`seedRewards.py`**, and **`seedUsers.py`**: Populate data for their respective tables.
+
+-   **`img/`**:
+
+    -   Contains image assets organized by type:
+        -   **`postImages/`**, **`profilepics/`**, **`reportimg/`**, and **`voucherimg/`** directories, each containing specific images.
+
+-   **`src/`**:
+    -   **`login/`**: Contains modules and logic related to user login.
+    -   **`middleware/verifyJWT.py`**: Middleware to verify JSON Web Tokens for user authentication.
+    -   **`migrations/`**: Scripts for creating and managing database tables and structures (e.g., `createUserTable.py`, `createReportsTable.py`, etc.).
+    -   **`posts/`**:
+        -   **`controllers/ControllerPosts.py`**: Manages post-related API endpoints.
+        -   **`models/`**: Contains data models for posts (`AuthorityModel.py`, `PostModel.py`).
+        -   **`services/`**: Business logic for posts (`AuthorityService.py`, `PostService.py`).
+        -   **`test_api/`** and **`test_unit/`**: Test files for post services and controllers.
+    -   **`reports/`**:
+        -   **`controllers/ControllerReports.py`**: Manages report-related API endpoints.
+        -   **`models/`**: Data models for reports (`PointsModel.py`, `ReportModels.py`).
+        -   **`services/`**: Business logic for handling reports (`OllamaAsync.py`, `PointsService.py`, `ReportService.py`, `telegramBot.py`).
+        -   **`test_api/`** and **`test_unit/`**: Test files for report services and controllers.
+    -   **`rewards/`**:
+        -   **`controllers/ControllerReward.py`**: Manages reward-related API endpoints.
+        -   **`models/`**: Data models for rewards (`MyRewards.py`, `RewardModel.py`).
+        -   **`services/RewardService.py`**: Contains business logic for rewards.
+        -   **`test_api/`** and **`test_unit/`**: Test files for reward services and controllers.
+    -   **`users/`**:
+        -   **`controllers/`**: Manages user-related API endpoints (`ControllerPublic.py`, `ControllerUser.py`).
+        -   **`models/`**: User-related models (`PasswordReset.py`, `UnverifiedUsers.py`, `UserModels.py`).
+        -   **`services/`**: Business logic for handling users (`AuthService.py`, `UserService.py`).
+        -   **`test_api/`** and **`test_unit/`**: Test files for user services and controllers.
+
+Each directory contains logically grouped files and follows a modular structure, making the project more maintainable and organized.
