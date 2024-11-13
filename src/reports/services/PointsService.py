@@ -88,7 +88,7 @@ class PointsService:
         return 200  # OK
 
     @staticmethod
-    async def calculate_points(ratings: list[int]) -> int:
+    def calculate_points(ratings: list[int]) -> int:
         """Calculate points based on rating factors."""
         return 2 * ratings[0] + 5 * ratings[1] + 3 * ratings[2]
 
@@ -107,7 +107,7 @@ class PointsService:
         print(result)
         if result["ratings"][0] < 5:
             return 0
-        addable_points = await self.calculate_points(result["ratings"])
+        addable_points = self.calculate_points(result["ratings"])
         return (
             addable_points,
             (result["ratings"][0], result["ratings"][1], result["ratings"][2]),
@@ -135,7 +135,7 @@ class PointsService:
         if new_points:
             points += new_points
             self.update_point_for_user_id(report.user_id, points, report.report_id)
-            self.update_ratings(report.report_id, ratings, points)
+            self.update_ratings(report.report_id, ratings, new_points)
             self.update_title(report.report_id, title)
             self.set_report_status_in_progress(report.report_id)
             self.set_ollama_description(report.report_id, analysis)
