@@ -8,13 +8,16 @@ from src.reports.services.ReportService import ReportService
 import asyncio
 from src.reports.services.telegramBot import telegramBot
 
+
 class PointsService:
     def __init__(self, conn: sqlite3.Connection, db_file: str = "database/users.db"):
         # Initialize the connection to the database
         self.conn = conn
         self.ollama = OllamaChat("llama3.2")
-        self.bot = telegramBot(botToken = "8163519930:AAHaPms3-hoBN5d7SRScXdsyeW-UBHaSXro", chatID = "-1002377143830")
-
+        self.bot = telegramBot(
+            botToken="8163519930:AAHaPms3-hoBN5d7SRScXdsyeW-UBHaSXro",
+            chatID="-1002377143830",
+        )
 
     def create_user(self, user_id: str) -> None:
         """Create the user in the User table with initial points set to 0 if it doesn't exist."""
@@ -146,12 +149,14 @@ class PointsService:
         nearest = await self.ollama.find_nearest_authority(
             float(lat), float(long), result
         )
-        self.bot.sendText(f"Report ID: {report.report_id}\n\nNearest Authority: {nearest['Authority Name']}\n\nReport Description: {report.description}\n\nRelevance: {ratings[0]}\n\nSeverity: {ratings[1]}\n\nUrgency: {ratings[2]}")
+        self.bot.sendText(
+            f"Report ID: {report.report_id}\n\nNearest Authority: {nearest['Authority Name']}\n\nReport Description: {report.description}\n\nRelevance: {ratings[0]}\n\nSeverity: {ratings[1]}\n\nUrgency: {ratings[2]}"
+        )
         # find the authority id from user table
         user_conn = sqlite3.connect("database/users.db")
         query = "SELECT UserID FROM User WHERE UserName = ?;"
         cursor = user_conn.cursor()
-        cursor.execute(query, (nearest['Authority Name'],))
+        cursor.execute(query, (nearest["Authority Name"],))
         result = cursor.fetchone()
         if result:
             nearest["Authority Name"] = result[0]
@@ -174,7 +179,7 @@ class PointsService:
         if cursor.rowcount == 0:
             return 404  # Not Found
         return 200  # OK
-    
+
     def set_authority_id(self, report_id: str, authority_id: str) -> int:
         """Set the authority id of a report in the Report table."""
         conn = sqlite3.connect("database/reports.db")

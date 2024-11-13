@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     # Dictionary of authority types by userName for reference
     authority_types = {
-        "amogh1" : "Strip Club",
+        "amogh1": "Strip Club",
         "maxwell1": "Police Station",
         "Bukit Batok Fire Station": "Fire Station",
         "Tampines Police Division": "Police Station",
@@ -79,9 +79,11 @@ if __name__ == "__main__":
 
     # Step 2: Insert authority users from 'seedUser' into 'authority' table
     # Here we join the 'authority_types' dictionary with the user data based on userName
-    cursor_user.execute("""
+    cursor_user.execute(
+        """
                     SELECT * from User;
-                        """)
+                        """
+    )
 
     cursor_user.execute(
         """
@@ -99,9 +101,11 @@ if __name__ == "__main__":
     for user in authority_users:
         user_id, user_name = user
         authority_type = authority_types.get(user_name, "Unknown")
-        
+
         # Debugging step: Check user info
-        print(f"Inserting user: userID={user_id}, userName={user_name}, authorityName={authority_type}")
+        print(
+            f"Inserting user: userID={user_id}, userName={user_name}, authorityName={authority_type}"
+        )
 
         # Insert into authority table
         cursor_authority.execute(
@@ -109,7 +113,7 @@ if __name__ == "__main__":
             INSERT OR REPLACE INTO authority (userID, authorityName)
             VALUES (?, ?)
             """,
-            (user_id, authority_type)
+            (user_id, authority_type),
         )
 
     # Step 3: Commit the transaction to save changes

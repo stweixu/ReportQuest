@@ -4,6 +4,7 @@ import uuid
 from src.users.services.UserService import UserService
 from src.users.models.UserModels import User, UserRead, UserUpdate
 
+
 @pytest.fixture
 def db_connection():
     """Creates a new SQLite in-memory database and initializes the required tables for testing."""
@@ -11,7 +12,8 @@ def db_connection():
     cursor = conn.cursor()
 
     # Create the User table as expected by UserService
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE User (
             userID TEXT PRIMARY KEY,
             userName TEXT NOT NULL,
@@ -24,15 +26,18 @@ def db_connection():
             isAuthority BOOLEAN NOT NULL,
             isModerator BOOLEAN NOT NULL
         );
-    """)
+    """
+    )
     conn.commit()
     yield conn
     conn.close()
+
 
 @pytest.fixture
 def user_service(db_connection):
     """Initialize UserService with the in-memory database."""
     return UserService(db_connection)
+
 
 @pytest.fixture
 def sample_user():
@@ -47,8 +52,9 @@ def sample_user():
         notificationPreference="email",
         notificationEnabled=True,
         isAuthority=False,
-        isModerator=False
+        isModerator=False,
     )
+
 
 def test_create_user(user_service, sample_user, db_connection):
     """Test creating a user in the User table."""
@@ -62,6 +68,7 @@ def test_create_user(user_service, sample_user, db_connection):
     result = cursor.fetchone()
     assert result is not None
 
+
 def test_read_all_users(user_service, sample_user):
     """Test retrieving all users from the User table."""
     user_service.create_user(sample_user)
@@ -69,6 +76,7 @@ def test_read_all_users(user_service, sample_user):
     assert status_code == 200
     assert len(users) == 1
     assert users[0].userID == uuid.UUID(sample_user.userID)
+
 
 def test_check_user_exists(user_service, sample_user):
     """Test checking if a user exists in the User table."""
@@ -80,6 +88,7 @@ def test_check_user_exists(user_service, sample_user):
     non_existent_id = str(uuid.uuid4())
     exists = user_service.check_user_exists(non_existent_id)
     assert exists is False
+
 
 def test_read_user(user_service, sample_user):
     """Test retrieving a user by userID."""
@@ -96,13 +105,16 @@ def test_read_user(user_service, sample_user):
     assert status_code == 404
     assert user is None
 
+
 def test_update_user_points(user_service, sample_user):
     """Test updating a user's points."""
     user_service.create_user(sample_user)
 
     # Update points
     new_points = 200
-    result_code = user_service.update_user_points(uuid.UUID(sample_user.userID), new_points)
+    result_code = user_service.update_user_points(
+        uuid.UUID(sample_user.userID), new_points
+    )
     assert result_code == 200
 
     # Verify the points update
@@ -111,14 +123,14 @@ def test_update_user_points(user_service, sample_user):
     updated_points = cursor.fetchone()[0]
     assert updated_points == new_points
 
+
 def test_update_user(user_service, sample_user):
     """Test updating a user's details."""
     user_service.create_user(sample_user)
 
     # Prepare updated data
     user_update = UserUpdate(
-        userName="updateduser",
-        emailAddress="updateduser@example.com"
+        userName="updateduser", emailAddress="updateduser@example.com"
     )
 
     # Update the user
@@ -127,9 +139,13 @@ def test_update_user(user_service, sample_user):
 
     # Verify the update
     cursor = user_service.conn.cursor()
-    cursor.execute("SELECT userName, emailAddress FROM User WHERE userID = ?", (sample_user.userID,))
+    cursor.execute(
+        "SELECT userName, emailAddress FROM User WHERE userID = ?",
+        (sample_user.userID,),
+    )
     result = cursor.fetchone()
     assert result == (user_update.userName, user_update.emailAddress)
+
 
 def test_delete_user(user_service, sample_user):
     """Test deleting a user by userID."""
@@ -142,6 +158,7 @@ def test_delete_user(user_service, sample_user):
     # Verify deletion
     exists = user_service.check_user_exists(sample_user.userID)
     assert exists is False
+
 
 def test_wipe_clean(user_service, sample_user, db_connection):
     """Test deleting all users from the User table."""

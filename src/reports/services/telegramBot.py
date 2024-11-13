@@ -1,8 +1,9 @@
 import requests
 from datetime import datetime, timedelta
 
+
 class telegramBot:
-    def __init__(self, botToken : str, chatID : str, graphDirectory : str = ""):
+    def __init__(self, botToken: str, chatID: str, graphDirectory: str = ""):
         """
         If you got any problems drop me a telegram message at @Maaxweel
         botToken : api bot token given by bot father @BotFather on telegram,
@@ -13,19 +14,19 @@ class telegramBot:
         self.chatID = chatID
         self.graphDirectory = graphDirectory
 
-    def sendText(self, msg : str) -> bool : 
+    def sendText(self, msg: str) -> bool:
         """
         msg : message in string format
         """
-        base_url = f'https://api.telegram.org/bot{self.botToken}/sendMessage?chat_id={self.chatID}&text={msg}'
+        base_url = f"https://api.telegram.org/bot{self.botToken}/sendMessage?chat_id={self.chatID}&text={msg}"
         requests.post(base_url)  # Sending automated message
         return True
 
-    def sendTextToChatID(self, msg : str, chatid : str) -> bool : 
+    def sendTextToChatID(self, msg: str, chatid: str) -> bool:
         """
         msg : message in string format
         """
-        base_url = f'https://api.telegram.org/bot{self.botToken}/sendMessage?chat_id={chatid}&text={msg}'
+        base_url = f"https://api.telegram.org/bot{self.botToken}/sendMessage?chat_id={chatid}&text={msg}"
         requests.post(base_url)  # Sending automated message
         return True
 
@@ -35,7 +36,7 @@ class telegramBot:
         """
         response = requests.get(url)
         if response.status_code == 200:
-            with open(filename, 'wb') as f:
+            with open(filename, "wb") as f:
                 f.write(response.content)
             print(f"Image downloaded successfully as {filename}")
         else:
@@ -46,15 +47,17 @@ class telegramBot:
         specificity : set to true if you want to listen ONLY to the chatid user, false if you want to listen to all users
         wait_time : wait time in seconds
         """
-        assert '-' not in self.chatID, 'ChatID is that of a Channel, unable to poll for responses'
-        site = f'https://api.telegram.org/bot{self.botToken}/getUpdates'
+        assert (
+            "-" not in self.chatID
+        ), "ChatID is that of a Channel, unable to poll for responses"
+        site = f"https://api.telegram.org/bot{self.botToken}/getUpdates"
         data = requests.get(site).json()  # reads data from the url getUpdates
-        chatid = ''
+        chatid = ""
         try:
-            lastMsg = len(data['result']) - 1
-            updateIdSave = data['result'][lastMsg]['update_id']
+            lastMsg = len(data["result"]) - 1
+            updateIdSave = data["result"][lastMsg]["update_id"]
         except:
-            updateIdSave = ''
+            updateIdSave = ""
         time = datetime.now()
         waitTime = time + timedelta(seconds=wait_time)
 
@@ -62,36 +65,48 @@ class telegramBot:
             try:
                 time = datetime.now()
                 data = requests.get(site).json()  # reads data from the url getUpdates
-                lastMsg = len(data['result']) - 1
-                updateId = data['result'][lastMsg]['update_id']
-                chatid = str(data['result'][lastMsg]['message']['chat']['id'])  # reads chat ID
+                lastMsg = len(data["result"]) - 1
+                updateId = data["result"][lastMsg]["update_id"]
+                chatid = str(
+                    data["result"][lastMsg]["message"]["chat"]["id"]
+                )  # reads chat ID
                 if specificity:
                     condition = self.chatID == chatid
                 else:
                     condition = True
                 if updateId != updateIdSave and condition:  # compares update ID
-                    message_type = data['result'][lastMsg]['message'].get('photo')
+                    message_type = data["result"][lastMsg]["message"].get("photo")
                     if message_type:
-                        file_id = message_type[-1]['file_id']
-                        file_info = requests.get(f'https://api.telegram.org/bot{self.botToken}/getFile?file_id={file_id}').json()
-                        file_path = file_info['result']['file_path']
-                        file_url = f'https://api.telegram.org/file/bot{self.botToken}/{file_path}'
+                        file_id = message_type[-1]["file_id"]
+                        file_info = requests.get(
+                            f"https://api.telegram.org/bot{self.botToken}/getFile?file_id={file_id}"
+                        ).json()
+                        file_path = file_info["result"]["file_path"]
+                        file_url = f"https://api.telegram.org/file/bot{self.botToken}/{file_path}"
 
                         # image_filename = os.path.basename(file_path)
                         # download_link = f'<a href="{file_url}">{image_filename}</a>'
-                        requests.get(f'https://api.telegram.org/bot{self.botToken}/getUpdates?offset=' + str(updateId))
-                        return {'type' : "image", "url" : file_url, "chatid" : chatid}
+                        requests.get(
+                            f"https://api.telegram.org/bot{self.botToken}/getUpdates?offset="
+                            + str(updateId)
+                        )
+                        return {"type": "image", "url": file_url, "chatid": chatid}
                     else:
-                        text = data['result'][lastMsg]['message']['text']  # reads what they have sent
-                        requests.get(f'https://api.telegram.org/bot{self.botToken}/getUpdates?offset=' + str(updateId))
+                        text = data["result"][lastMsg]["message"][
+                            "text"
+                        ]  # reads what they have sent
+                        requests.get(
+                            f"https://api.telegram.org/bot{self.botToken}/getUpdates?offset="
+                            + str(updateId)
+                        )
                         break
 
                 elif waitTime < time:
-                    text = ''
-                    chatid = ''
+                    text = ""
+                    chatid = ""
                     break
             except Exception as e:
                 print("Error:", e)
-                text = ''
+                text = ""
                 break
-        return {'type' : "text", "content" : text, "chatid" : chatid}
+        return {"type": "text", "content": text, "chatid": chatid}

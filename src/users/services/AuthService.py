@@ -207,7 +207,7 @@ class AuthService:
             return 500, None  # Internal server error
 
     def send_verification_email(
-    self, email: str, username: str, verification_key: str
+        self, email: str, username: str, verification_key: str
     ) -> None:
         """Send verification email with a unique verification link."""
         subject = "Please Confirm Your Email to Complete Registration"
@@ -271,7 +271,6 @@ class AuthService:
         """
 
         self.yag.send(to=email, subject=subject, contents=body)
-
 
     def reset_password(self, verification_key: str, new_password: str):
         """Reset a user's password using the provided verification key."""

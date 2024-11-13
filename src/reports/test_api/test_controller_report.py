@@ -10,16 +10,19 @@ TEST_REPORT_ID = str(uuid4())
 
 image_path = "src/reports/test_api/hotdogcat.png"
 
+
 @pytest.fixture(scope="module")
 def client():
     """Setup base URL for the API."""
     return BASE_URL
+
 
 def test_get_reports_by_user_id(client):
     """Test retrieving reports by user ID."""
     response = requests.get(f"{client}/user/{TEST_USER_ID}")
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list), "Expected a list of reports"
+
 
 def test_get_top_k_reports_by_severity(client):
     """Test retrieving top k reports by severity."""
@@ -28,6 +31,7 @@ def test_get_top_k_reports_by_severity(client):
     reports = response.json()
     assert isinstance(reports, list), "Expected a list of reports"
     assert len(reports) <= 5, "More than expected number of reports"
+
 
 def test_read_report_by_id(client):
     """Test retrieving a report by ID."""
@@ -38,6 +42,7 @@ def test_read_report_by_id(client):
     elif response.status_code == status.HTTP_404_NOT_FOUND:
         assert response.json()["detail"] == "Report not found"
 
+
 def test_get_reports_by_authority_id(client):
     """Test retrieving reports by authority ID."""
     authority_id = "sample_authority_id"
@@ -45,12 +50,16 @@ def test_get_reports_by_authority_id(client):
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list), "Expected a list of reports"
 
+
 def test_search_reports_by_description(client):
     """Test searching reports by description."""
     description = "Test report description"
-    response = requests.get(f"{client}/search/description", params={"description": description})
+    response = requests.get(
+        f"{client}/search/description", params={"description": description}
+    )
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list), "Expected a list of reports"
+
 
 def test_search_reports_by_title(client):
     """Test searching reports by title."""
@@ -58,6 +67,7 @@ def test_search_reports_by_title(client):
     response = requests.get(f"{client}/search/title", params={"title": title})
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), list), "Expected a list of reports"
+
 
 def test_submit_report(client):
     """Test submitting a report with image upload."""
@@ -71,9 +81,12 @@ def test_submit_report(client):
     }
     with open(image_path, "rb") as file:
         files = {"image": (image_path, file, "image/png")}
-        response = requests.post(f"{client}/submit-report/", data=report_data, files=files)
+        response = requests.post(
+            f"{client}/submit-report/", data=report_data, files=files
+        )
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["message"] == "Report received successfully"
+
 
 def test_delete_report(client):
     """Test deleting a report by ID."""
@@ -83,14 +96,18 @@ def test_delete_report(client):
     elif response.status_code == status.HTTP_404_NOT_FOUND:
         assert response.json()["detail"] == "Report not found"
 
+
 def test_update_report_status(client):
     """Test updating the status of a report."""
     new_status = "Resolved"
-    response = requests.put(f"{client}/{TEST_REPORT_ID}/status", params={"status": new_status})
+    response = requests.put(
+        f"{client}/{TEST_REPORT_ID}/status", params={"status": new_status}
+    )
     if response.status_code == status.HTTP_200_OK:
         assert response.json()["detail"] == "Report status updated successfully."
     elif response.status_code == status.HTTP_404_NOT_FOUND:
         assert response.json()["detail"] == "Report not found"
+
 
 def test_get_report_picture(client):
     """Test retrieving the picture of a report."""

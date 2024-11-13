@@ -76,7 +76,7 @@ predefined_uuids = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174005"),
 ]
 
-predefined_authority_id = [    
+predefined_authority_id = [
     uuid.UUID("123e4567-e89b-12d3-a456-426614174041"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174042"),
     uuid.UUID("123e4567-e89b-12d3-a456-426614174043"),

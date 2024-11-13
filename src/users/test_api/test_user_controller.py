@@ -40,7 +40,7 @@ def test_create_user(client):
         "notificationPreference": "email",
         "notificationEnabled": True,
         "isAuthority": False,
-        "isModerator": False
+        "isModerator": False,
     }
     response = requests.post(f"{client}/", json=new_user_data)
     assert response.status_code == status.HTTP_200_OK
@@ -51,10 +51,7 @@ def test_create_user(client):
 
 def test_update_user_points(client):
     """Test updating a user's points."""
-    update_data = {
-        "user_id": str(TEST_USER_ID),
-        "points": 50
-    }
+    update_data = {"user_id": str(TEST_USER_ID), "points": 50}
     response = requests.put(f"{client}/updatepoints", params=update_data)
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["detail"] == "User points updated successfully."
@@ -64,11 +61,12 @@ def test_update_user(client):
     """Test updating a user's details."""
     update_data = {
         "userName": "updated_user",
-        "emailAddress": "updated_user@example.com"
+        "emailAddress": "updated_user@example.com",
     }
     response = requests.put(f"{client}/{TEST_USER_ID}/update", json=update_data)
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["detail"] == "User updated successfully."
+
 
 def test_get_profile_picture(client):
     """Test retrieving a user's profile picture."""
@@ -81,8 +79,7 @@ def test_update_profile_picture(client):
     """Test updating a user's profile picture."""
     with open("src/users/test_api/test_profile_picture.png", "rb") as file:
         response = requests.post(
-            f"{client}/profilePicture/{TEST_USER_ID}",
-            files={"file": file}
+            f"{client}/profilePicture/{TEST_USER_ID}", files={"file": file}
         )
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["detail"] == "Profile picture updated successfully."

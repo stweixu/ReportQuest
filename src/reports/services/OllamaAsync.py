@@ -158,4 +158,3 @@ class OllamaChat:
             return relevant_authority
         else:
             return "Unknown"
-

@@ -4,9 +4,11 @@ from typing import Optional, Tuple, List
 from src.posts.services.AuthorityService import AuthorityService
 from src.posts.models.PostModel import Post
 
+
 class PostService:
-    
-    conn : Optional[sqlite3.Connection] = None
+
+    conn: Optional[sqlite3.Connection] = None
+
     @staticmethod
     def get_connection_instance() -> sqlite3.Connection:
         """Establish a new connection to the database."""
@@ -14,20 +16,21 @@ class PostService:
         conn.row_factory = sqlite3.Row  # Optional: Makes rows accessible by column name
         return conn
 
-
     @staticmethod
-    def ensure_connection_open(conn: Optional[sqlite3.Connection]) -> sqlite3.Connection:
+    def ensure_connection_open(
+        conn: Optional[sqlite3.Connection],
+    ) -> sqlite3.Connection:
         """Ensure that the connection is open, reopening it if necessary."""
         if conn is None:
             return PostService.get_connection_instance()
-        
+
         try:
             conn.execute("SELECT 1;")
         except sqlite3.ProgrammingError:
             # Reopen the connection if it's closed
             print("Connection was closed. Reopening it.")
             conn = PostService.get_connection_instance()
-        
+
         return conn
 
     @staticmethod
