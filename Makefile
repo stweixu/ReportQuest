@@ -1,8 +1,14 @@
+
+.PHONY: test clean migrate-full
+
 # running the main.py
 run:
 	python main.py
 
-run-reloadable:
+enable-ollama-gpu:
+	watch -n 0.5 nvidia-smi
+
+run-reloadable: 
 	uvicorn main:app --reload
 
 # sync dependancies
@@ -20,8 +26,20 @@ migrate-up:
 migrate-down:
 	python migrate.py down
 
-migrate-full:
-	make migrate-down && make migrate-up
-
 seed:
 	python seed.py
+
+migrate-full:
+	make migrate-down && make migrate-up && make seed
+
+generate-architecture:
+	tree -I 'venv|__pycache__' -I 'images' > structure.txt
+
+lint:
+	black .
+
+test:
+	make migrate-full && PYTHONPATH=./ pytest --verbose --disable-warnings && make-migrate-full
+
+clean:
+	rm -rf *.pyc __pycache__/

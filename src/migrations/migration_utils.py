@@ -2,9 +2,11 @@
 import sqlite3
 import sys
 
-def get_connection(db_path='database/users.db'):
+
+def get_connection(db_path="database/users.db"):
     """Establish a connection to the database."""
     return sqlite3.connect(db_path)
+
 
 def run_migration(migration_up, migration_down):
     """Run the appropriate migration function based on the command-line argument."""
@@ -15,6 +17,7 @@ def run_migration(migration_up, migration_down):
         migration_down()
     else:
         print("Invalid command line argument.")
+
 
 if __name__ == "__main__":
     pass

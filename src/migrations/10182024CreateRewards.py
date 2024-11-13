@@ -2,6 +2,7 @@ import sqlite3
 import sys
 from migration_utils import run_migration
 
+
 def up():
     conn: sqlite3.Connection = sqlite3.connect("database/rewards.db")
     """Create the Reward table if it doesn't exist."""
@@ -11,8 +12,7 @@ def up():
         Description TEXT NOT NULL,
         PointsRequired INTEGER NOT NULL CHECK(PointsRequired > 0),  -- Ensure points required is greater than zero
         Validity INTEGER NOT NULL ,
-        Availability INTEGER NOT NULL CHECK(Availability >= 0),  -- Ensure availability is non-negative
-        UserID TEXT NOT NULL
+        Availability INTEGER NOT NULL CHECK(Availability >= 0)  -- Ensure availability is non-negative
         );
     """
     try:
@@ -24,6 +24,7 @@ def up():
         print(e)
     finally:
         conn.close()
+
 
 def down():
     conn: sqlite3.Connection = sqlite3.connect("database/rewards.db")

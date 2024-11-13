@@ -7,13 +7,21 @@ from argon2 import PasswordHasher
 import jwt
 from datetime import datetime, timedelta
 from config import JWT_SECRET
-from src.users.models.UserModels import UserRegister, UserCreate, UserRead, User, UserLogin, StatusResponse
+from src.users.models.UserModels import (
+    UserRegister,
+    UserCreate,
+    UserRead,
+    User,
+    UserLogin,
+    StatusResponse,
+    UserUpdate,
+)
 
 
 # ============== Service class for the User model ===============
 # ============== Used to interact with database ================
 class UserService:
-    def __init__(self, conn: sqlite3.Connection, db_file: str = 'database/users.db'):
+    def __init__(self, conn: sqlite3.Connection, db_file: str = "database/users.db"):
         """Initialize the UserService with a connection to the SQLite database."""
         self.conn = conn
         # self.create_user_table()
@@ -51,9 +59,21 @@ class UserService:
         """
         try:
             cursor = self.conn.cursor()
-            cursor.execute(insert_query, (str(user.userID), user.userName, user.passwordHash, user.emailAddress,
-                                          user.loginStatus, user.points, user.notificationPreference,
-                                          user.notificationEnabled, user.isAuthority, user.isModerator))
+            cursor.execute(
+                insert_query,
+                (
+                    str(user.userID),
+                    user.userName,
+                    user.passwordHash,
+                    user.emailAddress,
+                    user.loginStatus,
+                    user.points,
+                    user.notificationPreference,
+                    user.notificationEnabled,
+                    user.isAuthority,
+                    user.isModerator,
+                ),
+            )
             self.conn.commit()
             return 201, UserRead(**user.__dict__)  # Created
         except sqlite3.IntegrityError:
@@ -67,7 +87,7 @@ class UserService:
         cursor = self.conn.cursor()
         cursor.execute(select_query)
         results = cursor.fetchall()
-        
+
         users = [
             UserRead(
                 userID=uuid.UUID(result[0]),  # Ensure proper UUID conversion
@@ -77,11 +97,22 @@ class UserService:
                 points=result[5],
                 notificationEnabled=bool(result[7]),  # Ensure boolean conversion
                 isAuthority=bool(result[8]),  # Ensure boolean conversion
-                isModerator=bool(result[9])  # Ensure boolean conversion
+                isModerator=bool(result[9]),  # Ensure boolean conversion
             )
             for result in results
         ]
         return 200, users  # OK
+
+    def check_user_exists(self, user_id: str) -> bool:
+        # look up the points db and table
+        # return True if the user exists, False otherwise
+        query = "SELECT userID FROM User WHERE userID = ?;"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchone()
+        if result:
+            return True
+        return False
 
     def read_user(self, user_id: uuid.UUID) -> Tuple[int, Optional[UserRead]]:
         """Fetch a user's details from the User table by userID."""
@@ -98,7 +129,7 @@ class UserService:
                 points=result[5],
                 notificationEnabled=bool(result[7]),
                 isAuthority=bool(result[8]),
-                isModerator=bool(result[9])
+                isModerator=bool(result[9]),
             )
             return 200, user  # OK
         else:
@@ -109,6 +140,33 @@ class UserService:
         update_query = "UPDATE User SET points = ? WHERE userID = ?;"
         cursor = self.conn.cursor()
         cursor.execute(update_query, (points, str(user_id)))
+        self.conn.commit()
+        print("poop")
+        if cursor.rowcount == 0:
+            return 404  # Not Found
+        return 200  # OK
+
+    def update_user(self, user_id: uuid.UUID, user: UserUpdate) -> int:
+        """Update a user in the User table."""
+        # check if username is already taken
+        query = "SELECT * FROM User WHERE userName = ? AND userID <> ?"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (user.userName, str(user_id)))
+        result = cursor.fetchone()
+        if result:
+            return (422, None)  # Bad Request user already exists
+        # check if email is already taken
+        query = "SELECT * FROM User WHERE emailAddress = ? AND userID <> ?"
+        cursor = self.conn.cursor()
+        cursor.execute(query, (user.emailAddress, str(user_id)))
+        result = cursor.fetchone()
+        if result:
+            return (422, None)  # Bad Request email already exists
+        update_query = (
+            "UPDATE User SET userName = ?, emailAddress = ? WHERE userID = ?;"
+        )
+        cursor = self.conn.cursor()
+        cursor.execute(update_query, (user.userName, user.emailAddress, str(user_id)))
         self.conn.commit()
         if cursor.rowcount == 0:
             return 404  # Not Found
@@ -128,7 +186,9 @@ class UserService:
         """Delete all data from the User table, keeping the table structure intact."""
         try:
             cursor = self.conn.cursor()
-            cursor.execute("DELETE FROM User;")  # This will delete all rows from the User table
+            cursor.execute(
+                "DELETE FROM User;"
+            )  # This will delete all rows from the User table
             self.conn.commit()
             return 200  # OK
         except sqlite3.Error as e:
