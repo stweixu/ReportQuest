@@ -116,3 +116,44 @@ def test_get_report_picture(client):
         assert response.headers["content-type"] in ["image/png", "image/jpeg"]
     elif response.status_code == status.HTTP_404_NOT_FOUND:
         assert response.json()["detail"] == "Report not found"
+
+
+# phoney cases
+def test_get_reports_by_nonexistent_user_id(client):
+    """Test retrieving reports for a non-existent user ID."""
+    nonexistent_user_id = str(uuid4())  # Generate a random ID
+    response = requests.get(f"{client}/user/{nonexistent_user_id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["detail"] == "User not found"
+
+
+def test_read_nonexistent_report_by_id(client):
+    """Test retrieving a non-existent report by ID."""
+    nonexistent_report_id = str(uuid4())  # Generate a random ID
+    response = requests.get(f"{client}/{nonexistent_report_id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["detail"] == "Report not found"
+
+def test_delete_nonexistent_report(client):
+    """Test deleting a non-existent report by ID."""
+    nonexistent_report_id = str(uuid4())  # Generate a random ID
+    response = requests.delete(f"{client}/{nonexistent_report_id}")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["detail"] == "Report not found"
+
+def test_update_nonexistent_report_status(client):
+    """Test updating the status of a non-existent report."""
+    nonexistent_report_id = str(uuid4())  # Generate a random ID
+    new_status = "Resolved"
+    response = requests.put(
+        f"{client}/{nonexistent_report_id}/status", params={"status": new_status}
+    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["detail"] == "Report not found"
+
+
+def test_get_nonexistent_report_picture(client):
+    """Test retrieving the picture of a non-existent report."""
+    nonexistent_report_id = str(uuid4())  # Generate a random ID
+    response = requests.get(f"{client}/reportPicture/{nonexistent_report_id}")
+    assert response.status_code == status.HTTP_200_OK

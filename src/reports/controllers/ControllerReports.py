@@ -49,6 +49,17 @@ async def create_report(report: Report):
 async def get_reports_by_user_id(user_id: str):
     """Retrieve all reports submitted by a specific user."""
     status_code, reports = report_service.read_report_by_user_id(user_id)
+    if status_code == 404:
+        if reports['detail'] == "User not found":
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Report not found",
+            )
     if status_code != 200:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

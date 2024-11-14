@@ -7,7 +7,7 @@ import os
 base_path = "database_seeder"
 
 for i in os.listdir(base_path):
-    if i == "seedAuthority.py":
+    if i == "seedAuthority.py" or i == "seedPosts.py":
         continue
     command = f"python {base_path}/{i}"
     print(f"executing {command}")
@@ -16,6 +16,10 @@ for i in os.listdir(base_path):
 # seed authority AFTER user
 
 command = f"python {base_path}/seedAuthority.py"
+print(f"executing {command}")
+os.system(command)
+
+command = f"python {base_path}/seedPosts.py"
 print(f"executing {command}")
 os.system(command)
 

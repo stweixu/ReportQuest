@@ -112,6 +112,9 @@ class ReportService:
 
     def read_report_by_user_id(self, user_id: str) -> Tuple[int, List[Report]]:
         """Fetch all reports from the Report table by user ID."""
+        # check if user exists
+        if not self.check_user_exists(user_id):
+            return 404, {"detail": "User not found"}
         query = "SELECT * FROM Report WHERE UserID = ? ORDER BY datetime DESC"
         cursor = self.conn.cursor()
         cursor.execute(query, (user_id,))
@@ -134,6 +137,7 @@ class ReportService:
 
     def read_report_by_id(self, report_id: str) -> Tuple[int, Optional[Report]]:
         """Fetch a report by ReportID."""
+        # check if user exists
         query = "SELECT * FROM Report WHERE ReportID = ?"
         cursor = self.conn.cursor()
         cursor.execute(query, (report_id,))
