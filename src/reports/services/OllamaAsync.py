@@ -15,7 +15,7 @@ class OllamaChat:
             "Fire Station",
             "Community Center",
             "Hospital",
-            "Emergency Services",
+            # "Emergency Services",
         ]
 
     async def ask(self, prompt: str) -> str:
@@ -138,12 +138,13 @@ class OllamaChat:
         c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
         return R * c
 
-    async def get_relevant_authority_ollama(self, description: str) -> str:
+    async def get_relevant_authority_ollama(self, description: str, analysis: str) -> str:
         # Create a prompt for Ollama to identify the relevant authority type
         prompt = (
             f"Based on the description below, identify the most relevant authority type from the list. "
             f"Respond only with the exact authority type as written in the list:\n\n"
             f"Description: {description}\n\n"
+            f"Analysis: {analysis}\n\n"
             f"Available authority types: {', '.join(self.authorities_list)}\n\n"
             f"Please respond with the most relevant authority type as written."
         )

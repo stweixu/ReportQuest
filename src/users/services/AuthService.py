@@ -207,11 +207,11 @@ class AuthService:
             return 500, None  # Internal server error
 
     def send_verification_email(
-        self, email: str, username: str, verification_key: str
+    self, email: str, username: str, verification_key: str
     ) -> None:
         """Send verification email with a unique verification link."""
         subject = "Please Confirm Your Email to Complete Registration"
-        verification_link = f"{FRONTEND_URL}/login?verification_key={verification_key}"
+        verification_link = f"{FRONTEND_URL}login?verification_key={verification_key}"
 
         # Use an HTML email template for a more professional look
         body = f"""
@@ -258,7 +258,7 @@ class AuthService:
                                     </p>
                                     <p style="margin-top: 30px; color: #333333;">
                                         Thank you,<br />
-                                        The {os.getenv("COMPANY_NAME", "Your Company")} Team
+                                        The Repoert Quest Team
                                     </p>
                                 </td>
                             </tr>
@@ -271,6 +271,7 @@ class AuthService:
         """
 
         self.yag.send(to=email, subject=subject, contents=body)
+
 
     def reset_password(self, verification_key: str, new_password: str):
         """Reset a user's password using the provided verification key."""
@@ -322,7 +323,7 @@ class AuthService:
         # Prepare and send the password reset email
         subject = "Password Reset Request"
         reset_link = (
-            f"{FRONTEND_URL}/reset-password?verification_key={verification_key}"
+            f"{FRONTEND_URL}reset-password?verification_key={verification_key}"
         )
         body = f"""
         <html>
@@ -345,7 +346,7 @@ class AuthService:
             <p>If you have any questions or need further assistance, please reach out to our support team.</p>
             
             <p>Thank you,<br>
-            The {os.getenv("COMPANY_NAME", "Your Company")} Team</p>
+            The Report Quest Team</p>
         </body>
         </html>
         """

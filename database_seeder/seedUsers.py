@@ -196,7 +196,7 @@ dummy_users = [
     User(
         userName="amogh1",
         passwordHash=ph.hash("password1"),
-        emailAddress="asriman2005@gmail.com",
+        emailAddress="asriman200@gmail.com", #asriman2005@gmail.com
         loginStatus=False,
         points=0,
         notificationPreference="sms",

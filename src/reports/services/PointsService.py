@@ -143,7 +143,7 @@ class PointsService:
             self.set_report_status_in_progress(report.report_id)
             self.set_ollama_description(report.report_id, analysis)
         # Identify the relevant authority
-        result = await self.ollama.get_relevant_authority_ollama(report.description)
+        result = await self.ollama.get_relevant_authority_ollama(report.description, analysis)
         print(f"Relevant authority: {result}")
         lat, long = report.location.split(",")
         nearest = await self.ollama.find_nearest_authority(
