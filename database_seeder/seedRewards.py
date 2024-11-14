@@ -162,7 +162,7 @@ dummy_rewards = [
     Reward(
         rewardID="rw123",
         description="Grab-10",
-        pointsRequired=100,
+        pointsRequired=40,
         validity=30,
         availability=50,
     ),
