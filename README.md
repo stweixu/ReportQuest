@@ -2,11 +2,7 @@
 
 ## Setup on WINDOWS WSL
 
-0. Retrieve config.py from the anyone else who has it
-
-```
-just ask maxwell first, he'll give it to you
-```
+0. Retrieve config.py
 
 1. Install Python 3.11
 
